@@ -1,6 +1,5 @@
-# Differentiable sorting
-A Python implementation of a fully-differentiable sorting function for power-of-2 length vectors. Uses Numpy (or PyTorch), but trivial to use in other backends.
-
+# Differentiable parallel sorting
+A Python implementation of a fully-differentiable sorting function for power-of-2 length vectors. Uses Numpy (or PyTorch), but trivial to use in other backends. Works on GPU.
 
     from differentiable_sorting import bitonic_matrices, diff_bisort
 
