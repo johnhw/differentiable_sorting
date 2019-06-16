@@ -18,7 +18,7 @@ A Python implementation of a fully-differentiable sorting function for power-of-
 
 *[Image: from Wikipedia, by user Bitonic, CC0](https://en.wikipedia.org/wiki/Bitonic_sorter#/media/File:BitonicSort1.svg)*
 
-The sorting network for `n=2^k` elements has `k(k-1)/2` "layers" where parallel compare-and-swap operations are used to rearrange a $k$ element vector into sorted order.
+The sorting network for `n=2^k` elements has `k(k-1)/2` "layers" where parallel compare-and-swap operations are used to rearrange a `n` element vector into sorted order.
 
 ### Differentiable compare-and-swap
 
@@ -50,3 +50,5 @@ The entire sorting network can then be written in terms of matrix multiplies and
                 x = l_inv @ a + r_inv @ b
             return x
 ```
+
+The rest of the code is simply computing the `l, r, l_inv, r_inv` matrices.
