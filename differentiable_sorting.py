@@ -2,6 +2,7 @@ try:
     # try to use autoray to provide transparent JAX/autograd support
     from autoray import numpy as np
 except ModuleNotFoundError:
+    print("No autoray, using numpy (note: grad won't work!)")
     import numpy as np
 
 
@@ -95,7 +96,7 @@ def diff_bisort(matrices, x):
     return x
 
 
-def bisort_woven_matrices(n):
+def bitonic_woven_matrices(n):
     """Combine the l,r and l_inv, r_inv matrices into single nxn multiplies, for
     use with bisort_weave/diff_bisort_weave"""
     woven = []

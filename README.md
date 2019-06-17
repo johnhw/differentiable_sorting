@@ -4,50 +4,43 @@ A Python implementation of a fully-differentiable *approximate* sorting function
 <img src="sorting_example.png">
 
 ```python
-
     from differentiable_sorting import bitonic_matrices, diff_bisort, diff_argsort
 
     # sort 8 element vectors
     sort_matrices = bitonic_matrices(8)
     x = [5.0, -1.0, 9.5, 13.2, 16.2, 20.5, 42.0, 18.0]
-    print(diff_bisort(sort_matrices, x)) 
 
+    print(diff_bisort(sort_matrices, x)) 
     >>> [-1.007  4.996  9.439 13.212 15.948 18.21  20.602 42.   ]
 
-    from differentiable_sorting import diff_bisort_smooth
     # we can relax towards averaging    
+    from differentiable_sorting import diff_bisort_smooth
     print(diff_bisort_smooth(sort_matrices, x, smooth=0.0)) # as above
-
     >>> [-1.007  4.996  9.439 13.212 15.948 18.21  20.602 42.   ]
 
     print(diff_bisort_smooth(sort_matrices, x, smooth=0.05)) # smoothed
-
     >>> [ 1.242  5.333  9.607 12.446 16.845 18.995 20.932 37.999]
         
     print(diff_bisort_smooth(sort_matrices, x, smooth=1.0)) # relax completely to mean
-
     >>> [15.425 15.425 15.425 15.425 15.425 15.425 15.425 15.425]
 
     print(np.mean(x))
-
     >>> 15.425
 
     ###### Ranking
     # We can rank as well
     x = [1, 2, 3, 4, 8, 7, 6, 4]
-    print(diff_argsort(sort_matrices, x))
 
+    print(diff_argsort(sort_matrices, x))
     >>> [0. 1. 2. 3. 7. 6. 5. 3.]
 
     # smoothed ranking function
-    print(diff_argsort(sort_matrices, x, sigma=5))
-
-    >>> [2.8  3.   3.2  3.41 4.24 4.04 3.83 3.41]
-
+    print(diff_argsort(sort_matrices, x, sigma=2))
+    >>> [0.989 0.156 2.006 3.242 4.705 5.601 5.505 6.   ]
 ```
 
 Caveats:
-* May not be very efficient (!), requiring approximately `2 log_2(n)^2` `n x n` matrix multiplies.
+* May not be very efficient (!), requiring approximately `2 log_2(n)^2` matrix multiplies of size `n x n`.
 * Numerical precision is limited, especially with `float32`. Very large or very small values will cause trouble.
 
 ## Libraries
@@ -58,7 +51,20 @@ The base code works with NumPy. If you want to use [autograd](https://github.com
 
 The code should then automatically work with whatever backend you are using. I have only tested `autograd` as a NumPy drop in. 
 
-`differentiable_sorting_torch.py` implements the necessary components in PyTorch. In theory Tensorflow is supported by `autoray` but (just pass a Tensorflow Tensor) but untested.
+`differentiable_sorting_torch.py` implements the necessary components in PyTorch. Tensorflow is also supported:
+
+```python 
+import tensorflow as tf
+from differentiable_sorting import bitonic_matrices, diff_bisort, diff_argsort
+
+tf_input = tf.reshape(tf.convert_to_tensor([5.0, -1.0, 9.5, 13.2, 16.2, 20.5, 42.0, 18.0], dtype=tf.float64), (-1,1))
+tf_output = tf.reshape(diff_bisort(tf_matrices, tf_input), (-1,))
+with tf.Session() as s:    
+    print(s.run((tf_output)))    
+
+>>> [-1.007  4.996  9.439 13.212 15.948 18.21  20.602 42.   ]    
+```
+
 
 ## Bitonic sorting
 
