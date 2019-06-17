@@ -1,8 +1,8 @@
 # Differentiable parallel approximate sorting networks
-A Python implementation of a fully-differentiable *approximate* sorting function for power-of-2 length vectors. Uses Numpy (or PyTorch), but trivial to use in other backends. Works on GPU. 
+A Python implementation of a fully-differentiable *approximate* sorting function for power-of-2 length vectors. Uses Numpy (or autograd, JAX or PyTorch), but trivial to use in other backends. Works on GPU. 
 ```python
 
-    from differentiable_sorting import bitonic_matrices, diff_bisort, diff_rank
+    from differentiable_sorting import bitonic_matrices, diff_bisort, diff_argsort
 
     # sort 8 element vectors
     sort_matrices = bitonic_matrices(8)
@@ -18,9 +18,9 @@ A Python implementation of a fully-differentiable *approximate* sorting function
 
     >>> [-1.007  4.996  9.439 13.212 15.948 18.21  20.602 42.   ]
 
-    print(diff_bisort_smooth(sort_matrices, x, smooth=0.5)) # smoothed
+    print(diff_bisort_smooth(sort_matrices, x, smooth=0.05)) # smoothed
 
-    >>> [10.795 11.371 11.539 12.114 18.537 19.18  19.567 20.297 ]
+    >>> [ 1.242  5.333  9.607 12.446 16.845 18.995 20.932 37.999]
         
     print(diff_bisort_smooth(sort_matrices, x, smooth=1.0)) # relax completely to mean
 
@@ -33,12 +33,12 @@ A Python implementation of a fully-differentiable *approximate* sorting function
     ###### Ranking
     # We can rank as well
     x = [1, 2, 3, 4, 8, 7, 6, 4]
-    print(diff_rank(sort_matrices, x))
+    print(diff_argsort(sort_matrices, x))
 
     >>> [0. 1. 2. 3. 7. 6. 5. 3.]
 
     # smoothed ranking function
-    print(diff_rank(sort_matrices, x, sigma=5))
+    print(diff_argsort(sort_matrices, x, sigma=5))
 
     >>> [2.8  3.   3.2  3.41 4.24 4.04 3.83 3.41]
 

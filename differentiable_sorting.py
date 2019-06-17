@@ -171,7 +171,7 @@ def order_matrix(original, sortd, sigma=0.1):
     return (rbf.T / np.sum(rbf, axis=1)).T
 
 
-def diff_rank(matrices, x, sigma=0.1):
+def diff_argsort(matrices, x, sigma=0.1):
     """Return the smoothed, differentiable ranking of each element of x. Sigma
     specifies the smoothing of the ranking. """
     sortd = diff_bisort(matrices, x)
