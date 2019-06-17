@@ -16,7 +16,7 @@ def softmin(a, b):
     return -softmax(-a, -b)
 
 
-def softrank(a, b):
+def softcswap(a, b):
     """Return a,b in 'soft-sorted' order, with the smaller value first"""
     return softmin(a, b), softmax(a, b)
 
@@ -89,7 +89,7 @@ def diff_bisort(matrices, x):
     a sequence x of length n. Values may be distorted slightly but will be ordered.
     """
     for l, r, map_l, map_r in matrices:
-        a, b = softrank(l @ x, r @ x)
+        a, b = softcswap(l @ x, r @ x)
         x = map_l @ a + map_r @ b
     return x
 
@@ -123,7 +123,7 @@ def diff_bisort_weave(matrices, x):
     split = len(x)//2
     for weave, unweave in matrices:
         woven = weave @ x                
-        x = unweave @ np.concatenate(softrank(woven[:split], woven[split:]))
+        x = unweave @ np.concatenate(softcswap(woven[:split], woven[split:]))
     return x        
 
 ### apply relaxation to the softmax function
@@ -137,9 +137,9 @@ def softmax_smooth(a, b, smooth=0):
 
 
 
-def softrank_smooth(a, b, smooth=0):
+def softcswap_smooth(a, b, smooth=0):
     """The smoothed compare and swap of a and b
-    With smooth=0, if softrank; with smooth=1.0, geometrically averages a and b"""
+    With smooth=0, if softcswap; with smooth=1.0, geometrically averages a and b"""
     return -softmax_smooth(-a, -b, smooth), softmax_smooth(a, b, smooth)
 
 
@@ -149,7 +149,7 @@ def diff_bisort_smooth(matrices, x, smooth=0):
     a sequence x of length n. Values will be distorted slightly but will be ordered.
     """
     for l, r, map_l, map_r in matrices:
-        a, b = softrank_smooth(l @ x, r @ x, smooth)
+        a, b = softcswap_smooth(l @ x, r @ x, smooth)
         x = map_l @ a + map_r @ b
     return x
 
@@ -162,7 +162,7 @@ def order_matrix(original, sortd, sigma=0.1):
     return (rbf.T / np.sum(rbf, axis=1)).T
 
 
-def differentiable_rank(matrices, x, sigma=0.1):
+def diff_rank(matrices, x, sigma=0.1):
     """Return the smoothed, differentiable ranking of each element of x. Sigma
     specifies the smoothing of the ranking. """
     sortd = diff_bisort(matrices, x)

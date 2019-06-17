@@ -1,12 +1,12 @@
 import torch
 
-from differentiable_sorting import softrank_smooth, diff_bisort, diff_bisort_smooth, differentiable_rank, bitonic_matrices
+from differentiable_sorting import softcswap_smooth, diff_bisort, diff_bisort_smooth, diff_rank, bitonic_matrices
 
 def softmax(a, b):
     """The softmaximum of softmax(a,b) = log(e^a + a^b)."""
     return torch.log(torch.exp(a) + torch.exp(b))
 
-def softrank(a, b):
+def softcswap(a, b):
     """Return a,b in 'soft-sorted' order, with the smaller value first"""    
     return -softmax(-a,-b), softmax(a, b)
 
@@ -16,7 +16,7 @@ def diff_bisort(matrices, x):
     a sequence x of length n. Values may be distorted slightly but will be ordered.
     """
     for l, r, map_l, map_r in matrices:
-        a, b = softrank(l @ x, r @ x)
+        a, b = softcswap(l @ x, r @ x)
         x = map_l @ a + map_r @ b
     return x
 
@@ -39,7 +39,7 @@ def order_matrix(original, sortd, sigma=0.1):
     return (rbf.t() / torch.sum(rbf, dim=1)).t()
 
 
-def differentiable_rank(matrices, x, sigma=0.1):
+def diff_rank(matrices, x, sigma=0.1):
     """Return the smoothed, differentiable ranking of each element of x. Sigma
     specifies the smoothing of the ranking. """
     sortd = diff_bisort(matrices, x)
