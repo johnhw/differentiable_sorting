@@ -12,15 +12,15 @@ A Python implementation of a fully-differentiable *approximate* sorting function
 
     # We can rank as well
     x = [1, 2, 3, 4, 8, 7, 6, 4]
-    print(differentiable_rank(matrices, x))
+    print(differentiable_rank(sort_matrices, x))
 
     >>> [0. 1. 2. 3. 7. 6. 5. 3.]
 
     # smoothed ranking function
-    print(differentiable_rank(matrices, x, sigma=5))
+    print(differentiable_rank(sort_matrices, x, sigma=5))
 
     >>> [2.8  3.   3.2  3.41 4.24 4.04 3.83 3.41]
-    
+
 ```
 
 ## Bitonic sorting
