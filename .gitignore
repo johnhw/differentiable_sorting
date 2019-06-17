@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+Smoothsort.ipynb 
+
+
 # Distribution / packaging
 .Python
 build/
