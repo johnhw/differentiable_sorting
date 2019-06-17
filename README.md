@@ -6,23 +6,23 @@ A Python implementation of a fully-differentiable *approximate* sorting function
 
     # sort 8 element vectors
     sort_matrices = bitonic_matrices(8)
-    print(diff_bisort(sort_matrices, [5.0, -1.0, 9.5, 13.2, 16.2, 20.5, 42.0, 18.0]))
+    x = [5.0, -1.0, 9.5, 13.2, 16.2, 20.5, 42.0, 18.0]
+    print(diff_bisort(sort_matrices, x)) 
 
     >>> [-1.007  4.996  9.439 13.212 15.948 18.21  20.602 42.   ]
 
     from differentiable_sorting import diff_bisort_smooth
     # we can relax towards averaging
     x = [5.0, -1.0, 9.5, 13.2, 16.2, 20.5, 42.0, 18.0]
-    print(diff_bisort_smooth(sort_matrices, x, smooth=0.0))
+    print(diff_bisort_smooth(sort_matrices, x, smooth=0.0)) # as above
 
     >>> [-1.007  4.996  9.439 13.212 15.948 18.21  20.602 42.   ]
 
-    print(diff_bisort_smooth(sort_matrices, x, smooth=0.5))
+    print(diff_bisort_smooth(sort_matrices, x, smooth=0.5)) # smoothed
 
-    >>> [10.795 11.371 11.539 12.114 18.537 19.18  19.567 20.297
-    
-    # relax completely to mean
-    print(diff_bisort_smooth(sort_matrices, x, smooth=1.0))
+    >>> [10.795 11.371 11.539 12.114 18.537 19.18  19.567 20.297 ]
+        
+    print(diff_bisort_smooth(sort_matrices, x, smooth=1.0)) # relax completely to mean
 
     >>> [15.425 15.425 15.425 15.425 15.425 15.425 15.425 15.425]
 
@@ -30,6 +30,7 @@ A Python implementation of a fully-differentiable *approximate* sorting function
 
     >>> 15.425
 
+    ###### Ranking
     # We can rank as well
     x = [1, 2, 3, 4, 8, 7, 6, 4]
     print(diff_rank(sort_matrices, x))

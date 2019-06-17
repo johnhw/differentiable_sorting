@@ -1,8 +1,7 @@
-if "use_jax" in globals() and use_jax:
-    import jax.numpy as np
-elif "use_autograd" in globals() and use_autograd:
-    import autograd.numpy as np
-else:
+try:
+    # try to use autoray to provide transparent JAX/autograd support
+    from autoray import numpy as np
+except ModuleNotFoundError:
     import numpy as np
 
 
@@ -167,7 +166,7 @@ def diff_bisort_smooth(matrices, x, smooth=0):
 def order_matrix(original, sortd, sigma=0.1):
     """Apply a simple RBF kernel to the difference between original and sortd,
     with the kernel width set by sigma. Normalise each row to sum to 1.0."""
-    diff = np.subtract.outer(original, sortd) ** 2
+    diff = (original - sortd.reshape(-1, 1)) ** 2
     rbf = np.exp(-(diff) / (2 * sigma ** 2))
     return (rbf.T / np.sum(rbf, axis=1)).T
 
