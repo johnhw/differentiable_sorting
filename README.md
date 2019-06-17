@@ -1,4 +1,4 @@
-# Differentiable parallel approximate sorting
+# Differentiable parallel approximate sorting networks
 A Python implementation of a fully-differentiable *approximate* sorting function for power-of-2 length vectors. Uses Numpy (or PyTorch), but trivial to use in other backends. Works on GPU. 
 ```python
 
