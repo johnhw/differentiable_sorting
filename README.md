@@ -1,5 +1,6 @@
 # Differentiable parallel approximate sorting
 A Python implementation of a fully-differentiable *approximate* sorting function for power-of-2 length vectors. Uses Numpy (or PyTorch), but trivial to use in other backends. Works on GPU. 
+```python
 
     from differentiable_sorting import bitonic_matrices, diff_bisort, differentiable_rank
 
@@ -19,7 +20,8 @@ A Python implementation of a fully-differentiable *approximate* sorting function
     print(differentiable_rank(matrices, x, sigma=5))
 
     >>> [2.8  3.   3.2  3.41 4.24 4.04 3.83 3.41]
-
+    
+```
 
 ## Bitonic sorting
 
