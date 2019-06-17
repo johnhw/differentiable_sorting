@@ -38,8 +38,8 @@ A Python implementation of a fully-differentiable *approximate* sorting function
     >>> [0. 1. 2. 3. 7. 6. 5. 3.]
 
     # smoothed ranking function
-    print(diff_argsort(sort_matrices, x, sigma=2))
-    >>> [0.989 0.156 2.006 3.242 4.705 5.601 5.505 6.   ]
+    print(diff_argsort(sort_matrices, x, sigma=0.25))
+    >>> [0.13 1.09 2.   3.11 6.99 6.   5.   3.11]
 ```
 
 Caveats:
@@ -141,6 +141,7 @@ The rest of the code is simply computing the `l, r, l_inv, r_inv` matrices, whic
 
 where `weave = np.vstack([l, r])` and `unweave = np.hstack([l_inv, r_inv])`.
 
+---
 
 There is also a function to pretty-print bitonic networks:
 
