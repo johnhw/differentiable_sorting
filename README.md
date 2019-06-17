@@ -44,6 +44,11 @@ A Python implementation of a fully-differentiable *approximate* sorting function
 
 ```
 
+Caveats:
+* May not be very efficient (!), requiring approximately `log_2(n)^2` `n x n`matrix multiplies.
+* Numerical precision is limited, especially at `float32`. Very large or very small values will cause trouble.
+
+
 ## Bitonic sorting
 
 [Bitonic sorts](https://en.wikipedia.org/wiki/Bitonic_sorter) allow creation of sorting networks with a sequence of fixed conditional swapping operations executed on an `n` element vector in parallel where, `n=2^k`.
