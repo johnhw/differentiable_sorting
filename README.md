@@ -3,6 +3,9 @@ A Python implementation of a fully-differentiable *approximate* sorting function
 
 <img src="sorting_example.png">
 
+
+      
+        
 ```python
     from differentiable_sorting import bitonic_matrices, diff_bisort, diff_argsort
 
@@ -137,3 +140,36 @@ The rest of the code is simply computing the `l, r, l_inv, r_inv` matrices, whic
 ```
 
 where `weave = np.vstack([l, r])` and `unweave = np.hstack([l_inv, r_inv])`.
+
+
+There is also a function to pretty-print bitonic networks:
+
+```python
+        pretty_bitonic_network(8)
+```
+
+        0  1  2  3  4  5  6  7 
+        ╭──╯  │  │  │  │  │  │ 
+        │  │  ╰──╮  │  │  │  │ 
+        │  │  │  │  ╭──╯  │  │ 
+        │  │  │  │  │  │  ╰──╮ 
+        ╭─────╯  │  │  │  │  │ 
+        │  ╭─────╯  │  │  │  │ 
+        │  │  │  │  ╰─────╮  │ 
+        │  │  │  │  │  ╰─────╮ 
+        ╭──╯  │  │  │  │  │  │ 
+        │  │  ╭──╯  │  │  │  │ 
+        │  │  │  │  ╰──╮  │  │ 
+        │  │  │  │  │  │  ╰──╮ 
+        ╭───────────╯  │  │  │ 
+        │  ╭───────────╯  │  │ 
+        │  │  ╭───────────╯  │ 
+        │  │  │  ╭───────────╯ 
+        ╭─────╯  │  │  │  │  │ 
+        │  ╭─────╯  │  │  │  │ 
+        │  │  │  │  ╭─────╯  │ 
+        │  │  │  │  │  ╭─────╯ 
+        ╭──╯  │  │  │  │  │  │ 
+        │  │  ╭──╯  │  │  │  │ 
+        │  │  │  │  ╭──╯  │  │ 
+        │  │  │  │  │  │  ╭──╯ 
