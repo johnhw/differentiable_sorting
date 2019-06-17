@@ -98,4 +98,4 @@ The entire sorting network can then be written in terms of matrix multiplies and
             return x
 ```
 
-The rest of the code is simply computing the `l, r, l_inv, r_inv` matrices.
+The rest of the code is simply computing the `l, r, l_inv, r_inv` matrices, which are fixed for a given `n`.
