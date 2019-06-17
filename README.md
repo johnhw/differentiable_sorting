@@ -48,6 +48,15 @@ Caveats:
 * May not be very efficient (!), requiring approximately `2 log_2(n)^2` `n x n` matrix multiplies.
 * Numerical precision is limited, especially with `float32`. Very large or very small values will cause trouble.
 
+## Libraries
+
+The base code works with NumPy. If you want to use [autograd](https://github.com/HIPS/autograd) [jax](https://github.com/google/jax) or [cupy](https://cupy.chainer.org/) then install the [autoray](https://pypi.org/project/autoray/) package.
+
+    pip install autoray
+
+The code should then automatically work with whatever backend you are using. I have only tested `autograd` as a NumPy drop in. 
+
+`differentiable_sorting_torch.py` implements the necessary components in PyTorch. In theory Tensorflow is supported by `autoray` but (just pass a Tensorflow Tensor) but untested.
 
 ## Bitonic sorting
 
