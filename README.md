@@ -1,5 +1,5 @@
-# Differentiable parallel sorting
-A Python implementation of a fully-differentiable sorting function for power-of-2 length vectors. Uses Numpy (or PyTorch), but trivial to use in other backends. Works on GPU.
+# Differentiable parallel approximate sorting
+A Python implementation of a fully-differentiable *approximate* sorting function for power-of-2 length vectors. Uses Numpy (or PyTorch), but trivial to use in other backends. Works on GPU. 
 
     from differentiable_sorting import bitonic_matrices, diff_bisort
 
@@ -19,11 +19,24 @@ A Python implementation of a fully-differentiable sorting function for power-of-
 
 The sorting network for `n=2^k` elements has `k(k-1)/2` "layers" where parallel compare-and-swap operations are used to rearrange a `n` element vector into sorted order.
 
+
+
 ### Differentiable compare-and-swap
 
 If we define the `softmax(a,b)` function (not the traditional "softmax" used for classification!) as the continuous approximation to the `max(a,b)` function, `softmax(a,b) = log(exp(a) + exp(b))`. We can then write `softmin(a,b)` as `softmin(a,b) = -log(exp(-a) + exp(-b))`
 
 Note that we now have a differentiable compare-and-swap operation: `softrank(a,b) = (softmin(a,b), softmax(a,b))`
+
+This idea was inspired by [this tweet](https://twitter.com/francoisfleuret/status/1139580698694733825) by @francoisfleuret:
+> François Fleuret @francoisfleuret Jun 14
+>
+>Discussion with Ronan Collober reminded me that (max, +) is a semi-ring, and made me realize that the same is true for (softmax, +) where
+>
+>softmax(a, b) = log(exp(a) + exp(b))
+>
+>All this coolness at the heart of his paper 
+>
+>https://arxiv.org/abs/1902.06022 
 
 ## Differentiable sorting
 
