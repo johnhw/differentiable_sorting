@@ -22,30 +22,36 @@ def pretty_bitonic_network(n):
     layers = int(np.log2(n))
     # header
     for i in range(n):
-        print(f"{i:<2d} ", end="")
+        print(f" {i:<2d}", end="")
     print()
 
     # layers
+    width = 4
+    grid = [["|"]*(n*width) for i in range(layers*layers)] 
+
     for layer in range(1, layers + 1):
         for sub in reversed(range(1, layer + 1)):
             for i in range(0, n, 2 ** sub):
                 for j in range(2 ** (sub - 1)):
                     ix = i + j
                     a, b = ix, ix + (2 ** (sub - 1))
-                    way = "<" if (ix >> layer) & 1 else ">"
-
+                    swap = (ix >> layer) & 1 
+                    
                     # this could be neater...
-                    for i in range(n):
-                        if i == b:
-                            print("+", end="")
-                        elif i == a:
-                            print("+", end="")
-                        elif not (a < i < b):
-                            print("│", end="")
+                    for k in range(n):
+                        if a == k:                            
+                            if swap:
+                                print(f" ╰─", end="")
+                            else:
+                                print(f" ╭─", end="")
+                        elif b==k:
+                            if swap:
+                                print(f"─╮ ", end="")
+                            else:
+                                print(f"─╯ ", end="")
+                        elif a < k < b:
+                            print("───", end="")
                         else:
-                            print(way, end="")
-                        if a <= i < b:
-                            print(way * 2, end="")
-                        else:
-                            print(" " * 2, end="")
+                            print(" │ ", end="")
+                        
                     print()
