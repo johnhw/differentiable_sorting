@@ -44,7 +44,7 @@ A Python implementation of a fully-differentiable *approximate* sorting function
     >>> [0.13 1.09 2.   3.11 6.99 6.   5.   3.11]
 
     # using autograd to differentiate smooth argsort
-    from autograd import jacobianj
+    from autograd import jacobian
     jac_rank = jacobian(diff_argsort, argnum=1)
     print(jac_rank(matrices, np.array(x), 0.25))
 
