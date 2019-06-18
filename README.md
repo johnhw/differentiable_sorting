@@ -1,7 +1,7 @@
 # Differentiable parallel approximate sorting networks
 A Python implementation of a fully-differentiable *approximate* sorting function for power-of-2 length vectors. Uses Numpy (or autograd, JAX or PyTorch), but trivial to use in other backends. Works on GPU. 
 
-<img src="sorting_example.png">
+<img src="imgs/sorting_example.png">
 
 
       
@@ -85,15 +85,22 @@ with tf.Session() as s:
 ```
 
 ## Error analysis
-The plot below shows the relative MSE error (MSE divided by the maximum range of the input) between the softmax sorted array and the ground truth sorted array, for vectors of length `n=2` through `n=256`, with test values distributed uniformly in ranges from [0, 2^-2] to [0, 2^10]. The main factor affecting precision is the numerical range. Small values will be corrupted, but values > ~300 will overflow (in `float64`):
+The plot below shows the relative MSE (MSE divided by the maximum range of the input) between the softmax sorted array and the ground truth sorted array, for vectors of length `n=2` through `n=512`, with test values distributed randomly uniformly in ranges from [0, 2^-5] to [0, 2^10]. The main factor affecting precision is the numerical range. Small values will be corrupted, but values > ~300 will overflow (in `float64`):
 
-<img src="error_analysis_float64.png" width="75%">
+<img src="imgs/error_analysis_float64.png" width="75%">
+
+**Softmax** error curve.
+
+<img src="imgs/error_analysis_float64_smoothmax.png" width="75%">
+
+**Smoothmax** error curve.
+
 
 ## Bitonic sorting
 
 [Bitonic sorts](https://en.wikipedia.org/wiki/Bitonic_sorter) allow creation of sorting networks with a sequence of fixed conditional swapping operations executed on an `n` element vector in parallel where, `n=2^k`.
 
-<img src="BitonicSort1.svg.png">
+<img src="imgs/BitonicSort1.svg.png">
 
 *[Image: from Wikipedia, by user Bitonic, CC0](https://en.wikipedia.org/wiki/Bitonic_sorter#/media/File:BitonicSort1.svg)*
 
