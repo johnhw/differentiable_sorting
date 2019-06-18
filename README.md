@@ -85,7 +85,7 @@ with tf.Session() as s:
 ```
 
 ## Error analysis
-The plot below shows the relative MSE (MSE divided by the maximum range of the input) between the softmax sorted array and the ground truth sorted array, for vectors of length `n=2` through `n=512`, with test values distributed randomly uniformly in ranges from [0, 2^-5] to [0, 2^10]. The main factor affecting precision is the numerical range. Small values will be corrupted, but values > ~300 will overflow (in `float64`):
+The plot below shows the relative RMS (RMS error divided by the maximum range of the input) between the softmax sorted array and the ground truth sorted array, for vectors of length `n=2` through `n=512`, with test values distributed randomly uniformly in ranges from [0, 2^-5] to [0, 2^10]. The main factor affecting precision is the numerical range. Small values will be corrupted, but values > ~300 will overflow (in `float64`):
 
 <img src="imgs/error_analysis_float64.png" width="75%">
 
