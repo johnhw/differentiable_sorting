@@ -115,7 +115,7 @@ The entire sorting network can then be written in terms of matrix multiplies and
             return np.log(np.exp(a) + np.exp(b))
 
         def softmin(a, b):
-            return -softmax(-a, -b)
+            return a+b-softmax(a, b)
 
         def softcswap(a, b):
             return softmin(a, b), softmax(a, b)
