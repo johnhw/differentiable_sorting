@@ -42,6 +42,20 @@ A Python implementation of a fully-differentiable *approximate* sorting function
     # smoothed ranking function
     print(diff_argsort(sort_matrices, x, sigma=0.25))
     >>> [0.13 1.09 2.   3.11 6.99 6.   5.   3.11]
+
+    # using autograd to differentiate smooth argsort
+    from autograd import jacobianj
+    jac_rank = jacobian(diff_argsort, argnum=1)
+    print(jac_rank(matrices, np.array(x), 0.25))
+
+    >>>     [[ 2.162 -1.059 -0.523 -0.287 -0.01  -0.018 -0.056 -0.21 ]
+            [-0.066  0.562 -0.186 -0.155 -0.005 -0.011 -0.035 -0.105]
+            [-0.012 -0.013  0.041 -0.005 -0.    -0.001 -0.002 -0.008]
+            [-0.012 -0.025 -0.108  0.564 -0.05  -0.086 -0.141 -0.14 ]
+            [-0.001 -0.001 -0.003 -0.005  0.104 -0.058 -0.028 -0.008]
+            [-0.    -0.001 -0.002 -0.004 -0.001  0.028 -0.012 -0.007]
+            [-0.    -0.    -0.001 -0.002 -0.016 -0.018  0.038 -0.001]
+            [-0.012 -0.025 -0.108 -0.209 -0.05  -0.086 -0.141  0.633]]
 ```
 
 Caveats:
