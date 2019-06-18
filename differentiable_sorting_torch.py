@@ -1,5 +1,5 @@
 import torch
-from differentiable_sorting import dsort
+from differentiable_sorting import diff_sort
 
 
 def softmax(a, b):
@@ -29,7 +29,7 @@ def order_matrix(original, sortd, sigma=0.1):
 def diff_argsort(matrices, x, sigma=0.1, softmax=softmax):
     """Return the smoothed, differentiable ranking of each element of x. Sigma
     specifies the smoothing of the ranking. """
-    sortd = dsort(matrices, x, softmax)
+    sortd = diff_sort(matrices, x, softmax)
     return order_matrix(x, sortd, sigma=sigma) @ (
         torch.arange(len(x), dtype=torch.float).to(x.get_device())
     )

@@ -13,18 +13,20 @@ A Python implementation of a fully-differentiable *approximate* sorting function
     sort_matrices = bitonic_matrices(8)
     x = [5.0, -1.0, 9.5, 13.2, 16.2, 20.5, 42.0, 18.0]
 
-    print(diff_bisort(sort_matrices, x)) 
+    print(diff_sort(sort_matrices, x)) 
     >>> [-1.007  4.996  9.439 13.212 15.948 18.21  20.602 42.   ]
 
-    # we can relax towards averaging    
-    from differentiable_sorting import diff_bisort_smooth
-    print(diff_bisort_smooth(sort_matrices, x, smooth=0.0)) # as above
+    # we can relax towards averaging by plugging in another
+    # softmax function to the network    
+    from differentiable_sorting import softmax_smooth
+    
+    print(diff_sort(sort_matrices, x, lambda a,b: softmax_smooth(a,b, 0.0))) # as above
     >>> [-1.007  4.996  9.439 13.212 15.948 18.21  20.602 42.   ]
 
-    print(diff_bisort_smooth(sort_matrices, x, smooth=0.05)) # smoothed
+    print(diff_sort(sort_matrices, x, lambda a,b: softmax_smooth(a,b, 0.05))) # smoothed
     >>> [ 1.242  5.333  9.607 12.446 16.845 18.995 20.932 37.999]
         
-    print(diff_bisort_smooth(sort_matrices, x, smooth=1.0)) # relax completely to mean
+    print(diff_sort(sort_matrices, x, lambda a,b: softmax_smooth(a,b, 1.0))) # relax completely to mean
     >>> [15.425 15.425 15.425 15.425 15.425 15.425 15.425 15.425]
 
     print(np.mean(x))
@@ -58,10 +60,10 @@ The code should then automatically work with whatever backend you are using. I h
 
 ```python 
 import tensorflow as tf
-from differentiable_sorting import bitonic_matrices, diff_bisort, diff_argsort
+from differentiable_sorting import bitonic_matrices, diff_sort, diff_argsort
 
 tf_input = tf.reshape(tf.convert_to_tensor([5.0, -1.0, 9.5, 13.2, 16.2, 20.5, 42.0, 18.0], dtype=tf.float64), (-1,1))
-tf_output = tf.reshape(diff_bisort(tf_matrices, tf_input), (-1,))
+tf_output = tf.reshape(diff_sort(tf_matrices, tf_input), (-1,))
 with tf.Session() as s:    
     print(s.run((tf_output)))    
 
