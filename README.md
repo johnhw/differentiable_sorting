@@ -61,6 +61,7 @@ A Python implementation of a fully-differentiable *approximate* sorting function
 Caveats:
 * May not be very efficient (!), requiring approximately `2 log_2(n)^2` matrix multiplies of size `n x n`.
 * Numerical precision is limited, especially with `float32`. Very large or very small values will cause trouble. Values distributed between 1 and 200 work reasonably. Values less than 1.0 are troublesome. 
+* The networks are *theoretically* differentiable, but gradients may be very small for larger networks.
 
 ## Libraries
 
@@ -104,7 +105,8 @@ Note that we now have a differentiable compare-and-swap operation: `softcswap(a,
 
 We can also use the `smoothmax(a,b, alpha) = a * exp(a*alpha) +  b* exp(b*alpha) / (exp(a*alpha)+exp(b*alpha))`, which has a configurable `alpha` term, allowing interpolation between a hard maximum (alpha -> infinity) and mean averaging (alpha -> 0).
 
-This idea was inspired by [this tweet](https://twitter.com/francoisfleuret/status/1139580698694733825) by @francoisfleuret:
+I assume this idea is well known, but I couldn't find an obvious implementation.
+This implementation was inspired by [this tweet](https://twitter.com/francoisfleuret/status/1139580698694733825) by @francoisfleuret:
 > François Fleuret @francoisfleuret Jun 14
 >
 >Discussion with Ronan Collober reminded me that (max, +) is a semi-ring, and made me realize that the same is true for (softmax, +) where
@@ -163,7 +165,7 @@ where `weave = np.vstack([l, r])` and `unweave = np.hstack([l_inv, r_inv])`.
 
 
 ## Error analysis
-The plot below shows the relative RMS (RMS error divided by the maximum range of the input) between the softmax sorted array and the ground truth sorted array, for vectors of length `n=2` through `n=512`, with test values distributed randomly uniformly in ranges from [0, 2^-5] to [0, 2^10]. The main factor affecting precision is the numerical range. Small values will be corrupted, but values > ~300 will overflow (in `float64`):
+The plot below shows the relative RMS (RMS error divided by the maximum range of the input vector) between the softmax sorted array and the ground truth sorted array, for vectors of length `n=2` through `n=512`, with test values distributed randomly uniformly in ranges from [0, 2^-5] to [0, 2^10]. The main factor affecting precision is the numerical range. Small values will be corrupted, but values > ~300 will overflow (in `float64`):
 
 <img src="imgs/error_analysis_float64.png" width="75%">
 
