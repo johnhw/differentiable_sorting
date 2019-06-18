@@ -84,16 +84,6 @@ with tf.Session() as s:
 >>> [-1.007  4.996  9.439 13.212 15.948 18.21  20.602 42.   ]    
 ```
 
-## Error analysis
-The plot below shows the relative RMS (RMS error divided by the maximum range of the input) between the softmax sorted array and the ground truth sorted array, for vectors of length `n=2` through `n=512`, with test values distributed randomly uniformly in ranges from [0, 2^-5] to [0, 2^10]. The main factor affecting precision is the numerical range. Small values will be corrupted, but values > ~300 will overflow (in `float64`):
-
-<img src="imgs/error_analysis_float64.png" width="75%">
-
-**Softmax** error curve.
-
-<img src="imgs/error_analysis_float64_smoothmax.png" width="75%">
-
-**Smoothmax** error curve.
 
 
 ## Bitonic sorting
@@ -167,6 +157,21 @@ The rest of the code is simply computing the `l, r, l_inv, r_inv` matrices, whic
 ```
 
 where `weave = np.vstack([l, r])` and `unweave = np.hstack([l_inv, r_inv])`.
+
+---
+
+
+
+## Error analysis
+The plot below shows the relative RMS (RMS error divided by the maximum range of the input) between the softmax sorted array and the ground truth sorted array, for vectors of length `n=2` through `n=512`, with test values distributed randomly uniformly in ranges from [0, 2^-5] to [0, 2^10]. The main factor affecting precision is the numerical range. Small values will be corrupted, but values > ~300 will overflow (in `float64`):
+
+<img src="imgs/error_analysis_float64.png" width="75%">
+
+**Softmax** error curve.
+
+<img src="imgs/error_analysis_float64_smoothmax.png" width="75%">
+
+**Smoothmax** error curve.
 
 ---
 
