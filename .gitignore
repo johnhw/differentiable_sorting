@@ -7,7 +7,7 @@ __pycache__/
 *.so
 
 Smoothsort.ipynb 
-
+ErrorAnalysis.ipynb
 
 # Distribution / packaging
 .Python

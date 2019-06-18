@@ -44,7 +44,7 @@ A Python implementation of a fully-differentiable *approximate* sorting function
 
 Caveats:
 * May not be very efficient (!), requiring approximately `2 log_2(n)^2` matrix multiplies of size `n x n`.
-* Numerical precision is limited, especially with `float32`. Very large or very small values will cause trouble.
+* Numerical precision is limited, especially with `float32`. Very large or very small values will cause trouble. Values between 1 and 200 work reasonably.
 
 ## Libraries
 
@@ -86,6 +86,8 @@ The sorting network for `n=2^k` elements has `k(k-1)/2` "layers" where parallel 
 If we define the `softmax(a,b)` function (not the traditional "softmax" used for classification!) as the continuous approximation to the `max(a,b)` function, `softmax(a,b) = log(exp(a) + exp(b))`. We can then write `softmin(a,b)` as `softmin(a,b) = -log(exp(-a) + exp(-b))`
 
 Note that we now have a differentiable compare-and-swap operation: `softcswap(a,b) = (softmin(a,b), softmax(a,b))`
+
+We can also use the `smoothmax(a,b, alpha) = a * exp(a*alpha) +  b* exp(b*alpha) / (exp(a*alpha)+exp(b*alpha))`, which has a configurable `alpha` term, allowing interpolation between a hard maximum (alpha -> infinity) and mean averaging (alpha -> 0).
 
 This idea was inspired by [this tweet](https://twitter.com/francoisfleuret/status/1139580698694733825) by @francoisfleuret:
 > François Fleuret @francoisfleuret Jun 14
