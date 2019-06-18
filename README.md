@@ -46,7 +46,7 @@ A Python implementation of a fully-differentiable *approximate* sorting function
 
 Caveats:
 * May not be very efficient (!), requiring approximately `2 log_2(n)^2` matrix multiplies of size `n x n`.
-* Numerical precision is limited, especially with `float32`. Very large or very small values will cause trouble. Values between 1 and 200 work reasonably.
+* Numerical precision is limited, especially with `float32`. Very large or very small values will cause trouble. Values distributed between 1 and 200 work reasonably. Values less than 1.0 are troublesome. 
 
 ## Libraries
 
