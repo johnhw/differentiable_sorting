@@ -7,7 +7,7 @@ A Python implementation of a fully-differentiable *approximate* sorting function
       
         
 ```python
-    from differentiable_sorting import bitonic_matrices, diff_bisort, diff_argsort
+    from differentiable_sorting import bitonic_matrices, diff_sort, diff_argsort
 
     # sort 8 element vectors
     sort_matrices = bitonic_matrices(8)
@@ -46,7 +46,7 @@ A Python implementation of a fully-differentiable *approximate* sorting function
     # using autograd to differentiate smooth argsort
     from autograd import jacobian
     jac_rank = jacobian(diff_argsort, argnum=1)
-    print(jac_rank(matrices, np.array(x), 0.25))
+    print(jac_rank(sort_matrices, np.array(x), 0.25))
 
     >>>     [[ 2.162 -1.059 -0.523 -0.287 -0.01  -0.018 -0.056 -0.21 ]
             [-0.066  0.562 -0.186 -0.155 -0.005 -0.011 -0.035 -0.105]
