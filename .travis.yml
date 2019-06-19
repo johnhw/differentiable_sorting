@@ -15,6 +15,6 @@ before_install:
 
 install:
     - conda env create -f environment.yml
-    - conda activate differentiable_sorting
+    - source activate differentiable_sorting
     
 script: pytest    
