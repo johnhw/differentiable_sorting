@@ -1,6 +1,7 @@
 name: differentiable_sorting
 
 dependencies:
+  - python=3.7
   - numpy
   - scipy    
   - pip
