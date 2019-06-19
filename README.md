@@ -74,11 +74,34 @@ The base code works with NumPy. If you want to use [autograd](https://github.com
 
 The code should then automatically work with whatever backend you are using. 
 
-`differentiable_sorting_torch.py` implements the necessary components in PyTorch. Tensorflow is also supported:
+### PyTorch and Tensorflow
+PyTorch is supported:
+```python 
+import torch
+from differentiable_sorting.torch import bitonic_matrices, diff_sort
+from torch.autograd import Variable
+
+x = [5.0, -1.0, 9.5, 13.2, 16.2, 20.5, 42.0, 18.0]
+matrices = bitonic_matrices(8)
+torch_input = Variable(torch.from_numpy(np.array(x)).float(), requires_grad=True)
+result = diff_sort(matrices, torch_input)
+print(result)
+
+>>> tensor([-1.0075,  4.9958,  9.4394, 13.2117, 15.9480, 18.2103, 20.6023, 42.0000],
+       grad_fn=<AddBackward0>)
+
+print(torch.autograd.grad(result[0], torch_input)[0])
+
+>>> tensor([7.3447e-03, 9.9257e-01, 8.1266e-05, 3.9275e-06, 3.4427e-08, 1.4447e-09,
+        0.0000e+00, 9.5952e-09])
+```
+
+
+Tensorflow is also supported:
 
 ```python 
 import tensorflow as tf
-from differentiable_sorting import bitonic_matrices, diff_sort, diff_argsort
+from differentiable_sorting.tensorflow import bitonic_matrices, diff_sort, diff_argsort
 
 tf_input = tf.reshape(tf.convert_to_tensor([5.0, -1.0, 9.5, 13.2, 16.2, 20.5, 42.0, 18.0], dtype=tf.float64), (-1,1))
 tf_output = tf.reshape(diff_sort(tf_matrices, tf_input), (-1,))
