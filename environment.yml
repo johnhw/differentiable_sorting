@@ -5,6 +5,7 @@ dependencies:
   - numpy
   - scipy    
   - pip
+  - pytest
   - pip:
     - autograd
     - autoray
