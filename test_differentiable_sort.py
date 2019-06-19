@@ -1,6 +1,10 @@
 import pytest
 import numpy as np
-from differentiable_sorting import bitonic_matrices, bitonic_woven_matrices, bitonic_indices
+from differentiable_sorting import (
+    bitonic_matrices,
+    bitonic_woven_matrices,
+    bitonic_indices,
+)
 from differentiable_sorting import diff_sort_indexed, diff_sort_weave
 from differentiable_sorting import softmax, smoothmax, softmax_smooth
 from differentiable_sorting import diff_sort, diff_argsort
@@ -91,19 +95,22 @@ def test_woven_matrices():
                 assert np.allclose(np.sum(m, axis=0), np.ones(n))
                 assert np.allclose(np.sum(m, axis=1), np.ones(n))
 
+
 from scipy.stats import rankdata
+
 
 def test_ranking():
     for n in [2, 4, 8, 16, 32, 64, 128, 256, 512]:
         woven = bitonic_woven_matrices(n)
         indices = bitonic_indices(n)
-        matrices = bitonic_matrices(n)        
-        for i in range(20):            
+        matrices = bitonic_matrices(n)
+        for i in range(20):
             # test ranking
             test = np.random.randint(-200, 200, n)
-            true_rank = rankdata(test)            
-            dargsort = diff_argsort(matrices, test, sigma=0.001, softmax=np.maximum)            
-            assert(np.allclose(true_rank-1, dargsort))    
+            true_rank = rankdata(test)
+            dargsort = diff_argsort(matrices, test, sigma=0.001, softmax=np.maximum)
+            assert np.allclose(true_rank - 1, dargsort)
+
 
 # check that the various different representations
 # all come to the same ground truth
@@ -111,11 +118,11 @@ def test_forms():
     for n in [2, 4, 8, 16, 32, 64, 128, 256, 512]:
         woven = bitonic_woven_matrices(n)
         indices = bitonic_indices(n)
-        matrices = bitonic_matrices(n)        
+        matrices = bitonic_matrices(n)
         for i in range(20):
             test = np.random.randint(-200, 200, n)
             truth = np.sort(test)
-            assert(np.all(diff_sort(matrices, truth, np.maximum)==truth))
-            assert(np.all(diff_sort_weave(woven, truth, np.maximum)==truth))
-            assert(np.all(diff_sort_indexed(indices, truth, np.maximum)==truth))
-    
+            assert np.all(diff_sort(matrices, truth, np.maximum) == truth)
+            assert np.all(diff_sort_weave(woven, truth, np.maximum) == truth)
+            assert np.all(diff_sort_indexed(indices, truth, np.maximum) == truth)
+

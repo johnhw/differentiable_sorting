@@ -1,0 +1,9 @@
+name: differentiable_sorting
+
+dependencies:
+  - numpy
+  - scipy    
+  - pip
+  - pip:
+    - autograd
+    - autoray
