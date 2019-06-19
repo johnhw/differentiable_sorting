@@ -177,15 +177,25 @@ def order_matrix(original, sortd, sigma=0.1):
     return (rbf.T / np.sum(rbf, axis=1)).T
 
 
-def diff_argsort(matrices, x, sigma=0.1, softmax=softmax):
-    """Return the smoothed, differentiable ranking of each element of x. Sigma
-    specifies the smoothing of the ranking. """
-    sortd = diff_sort(matrices, x, softmax)
-    return order_matrix(x, sortd, sigma=sigma) @ np.arange(len(x))
+def dargsort(original, sortd, sigma, transpose=False):
+    order = order_matrix(original, sortd, sigma=sigma)
+    if transpose: 
+        order = order.T
+    return  order @ np.arange(len(original))
 
-def diff_argsort_indexed(indices, x, sigma=0.1, softmax=softmax):
+def diff_argsort(matrices, x, sigma=0.1, softmax=softmax, transpose=False):
+    """Return the smoothed, differentiable ranking of each element of x. Sigma
+    specifies the smoothing of the ranking. 
+    If transpose is true, returns argsort; if false, returns ranking.
+    """
+    sortd = diff_sort(matrices, x, softmax)
+    return dargsort(x, sortd, sigma, transpose)
+    
+def diff_argsort_indexed(indices, x, sigma=0.1, softmax=softmax, transpose=False):
     """Return the smoothed, differentiable ranking of each element of x. Sigma
     specifies the smoothing of the ranking. Uses the indexed form
-    to avoid multiplies."""
+    to avoid multiplies.
+    If transpose is true, returns argsort; if false, returns ranking.
+    """
     sortd = diff_sort_indexed(indices, x, softmax)
-    return order_matrix(x, sortd, sigma=sigma) @ np.arange(len(x))
+    return dargsort(x, sortd, sigma, transpose)
