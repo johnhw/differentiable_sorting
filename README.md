@@ -62,6 +62,7 @@ Caveats:
 * May not be very efficient (!), requiring approximately `2 log_2(n)^2` matrix multiplies of size `n x n`. These are just permutations, so can also be efficiently implemented via indexing, requiring `2n` indexing operations per layer.
 * Numerical precision is limited, especially with `float32`. Very large or very small values will cause trouble. Values distributed between 1 and 200 work reasonably. Values less than 1.0 are troublesome. 
 * The networks are *theoretically* differentiable, but gradients may be very small for larger networks.
+* I assume this idea is well known, but I couldn't find an obvious reference.
 
 ## Libraries
 
@@ -105,7 +106,7 @@ Note that we now have a differentiable compare-and-swap operation: `softcswap(a,
 
 We can also use the `smoothmax(a,b, alpha) = a * exp(a*alpha) +  b* exp(b*alpha) / (exp(a*alpha)+exp(b*alpha))`, which has a configurable `alpha` term, allowing interpolation between a hard maximum (alpha -> infinity) and mean averaging (alpha -> 0).
 
-I assume this idea is well known, but I couldn't find an obvious implementation.
+
 This implementation was inspired by [this tweet](https://twitter.com/francoisfleuret/status/1139580698694733825) by @francoisfleuret:
 > François Fleuret @francoisfleuret Jun 14
 >
