@@ -33,12 +33,12 @@ def test_sorting():
             test_input = np.random.randint(-200, 200, 8)
             test = Variable(torch.from_numpy(test_input).float(), requires_grad=True)
 
-            result = diff_sort(torch_matrices, test)
+            result = diff_sort(torch_matrices, test, softmax=max_fn)
             jacobian(result, test)
-            ranked_result = diff_argsort(torch_matrices, test)
+            ranked_result = diff_argsort(torch_matrices, test, softmax=max_fn)
             jacobian(ranked_result, test)
-            diff_argsort(torch_matrices, test, transpose=True)
-            argsorted_result = diff_argsort(torch_matrices, test)
+            diff_argsort(torch_matrices, test, transpose=True, softmax=max_fn)
+            argsorted_result = diff_argsort(torch_matrices, test, softmax=max_fn)
             jacobian(argsorted_result, test)
 
 

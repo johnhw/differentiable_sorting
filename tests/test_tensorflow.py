@@ -27,13 +27,12 @@ def test_sorting():
     dtype = tf.float64
     tf_matrices = bitonic_matrices(8)
     for max_fn in [softmax, smoothmax, softmax_smooth]:
-        for i in range(5):
-            test = to_tf(np.random.randint(-200, 200, 8), dtype=dtype)
-            tf_output = tf.reshape(diff_sort(tf_matrices, test), (-1,))
-            tf_ranks = diff_argsort(tf_matrices, test)
-            tf_argsort = diff_argsort(tf_matrices, test, transpose=True)
-            tf_grads = tf.squeeze(jacobian(tf_output, test))
-            # compute output and gradient
-            with tf.Session() as s:
-                s.run((tf_output, tf_grads, tf_ranks, tf_argsort))
+        test = to_tf(np.random.randint(-200, 200, 8), dtype=dtype)
+        tf_output = tf.reshape(diff_sort(tf_matrices, test), (-1,))
+        tf_ranks = diff_argsort(tf_matrices, test)
+        tf_argsort = diff_argsort(tf_matrices, test, transpose=True)
+        tf_grads = tf.squeeze(jacobian(tf_output, test))
+        # compute output and gradient
+        with tf.Session() as s:
+            s.run((tf_output, tf_grads, tf_ranks, tf_argsort))
 

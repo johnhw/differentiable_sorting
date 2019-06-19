@@ -1,9 +1,10 @@
 import torch
+import numpy as np
 from ..differentiable_sorting import diff_sort
 from ..differentiable_sorting import bitonic_matrices as np_bitonic_matrices
 
 ### Softmax (log-sum-exp)
-def softmax(a, b, alpha=1, normalize=0):
+def softmax(a, b, alpha=1.0, normalize=0.0):
     """The softmaximum of softmax(a,b) = log(e^a + a^b).
     normalize should be zero if a or b could be negative and can be 1.0 (more accurate)
     if a and b are strictly positive.
@@ -12,20 +13,20 @@ def softmax(a, b, alpha=1, normalize=0):
 
 
 ### Smooth max
-def smoothmax(a, b, alpha=1):
+def smoothmax(a, b, alpha=1.0):
     return (a * torch.exp(a * alpha) + b * torch.exp(b * alpha)) / (
         torch.exp(a * alpha) + torch.exp(b * alpha)
     )
 
 
 ### relaxed softmax
-def softmax_smooth(a, b, smooth=0):
+def softmax_smooth(a, b, smooth=0.0):
     """The smoothed softmaximum of softmax(a,b) = log(e^a + a^b).
     With smooth=0.0, is softmax; with smooth=1.0, averages a and b"""
     t = smooth / 2.0
     return torch.log(
-        torch.exp((1 - t) * a + b * t) + torch.exp((1 - t) * b + t * a)
-    ) - torch.log(1 + smooth)
+        torch.exp((1.0 - t) * a + b * t) + torch.exp((1.0 - t) * b + t * a)
+    ) - np.log(1.0 + smooth)
 
 
 ### differentiable ranking

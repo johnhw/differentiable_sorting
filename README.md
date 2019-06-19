@@ -5,7 +5,6 @@ A Python implementation of a fully-differentiable *approximate* sorting function
 
 [![Build Status](https://travis-ci.com/johnhw/differentiable_sorting.svg?branch=master)](https://travis-ci.com/johnhw/differentiable_sorting)
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/johnhw/differentiable_sorting/master?filepath=differentiable_bitonic_sort.ipynb)
 
         
 ```python

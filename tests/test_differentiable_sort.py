@@ -7,7 +7,7 @@ from differentiable_sorting import (
 )
 from differentiable_sorting import diff_sort_indexed, diff_sort_weave
 from differentiable_sorting import softmax, smoothmax, softmax_smooth
-from differentiable_sorting import diff_sort, diff_argsort
+from differentiable_sorting import diff_sort, diff_argsort, diff_argsort_indexed
 
 # non-power-of-2
 # tests for smoothing, woven structure, argsort, etc.
@@ -37,6 +37,10 @@ def test_argsort():
                             argsorted = diff_argsort(
                                 matrices, vec, sigma, softmax=max_fn
                             )
+                            argsorted = diff_argsort(
+                                matrices, vec, sigma, softmax=max_fn, transpose=True
+                            )
+                            
                             assert np.all(argsorted >= 0)
 
 
@@ -109,6 +113,8 @@ def test_ranking():
             test = np.random.randint(-200, 200, n)
             true_rank = rankdata(test)
             dargsort = diff_argsort(matrices, test, sigma=0.001, softmax=np.maximum)
+            assert np.allclose(true_rank - 1, dargsort)
+            dargsort = diff_argsort_indexed(indices, test, sigma=0.001, softmax=np.maximum)
             assert np.allclose(true_rank - 1, dargsort)
 
 
