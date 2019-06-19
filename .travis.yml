@@ -16,6 +16,8 @@ before_install:
 install:
     - source ~/miniconda/etc/profile.d/conda.sh
     - conda env create -f environment.yml -n differentiable_sorting    
+    - pip install tensorflow
+    - conda install pytorch-cpu -c pytorch
     - conda activate differentiable_sorting
     
 script: python -m pytest  
