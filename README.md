@@ -62,7 +62,7 @@ A Python implementation of a fully-differentiable *approximate* sorting function
 
 Caveats:
 * May not be very efficient (!), requiring approximately `2 log_2(n)^2` matrix multiplies of size `n x n`. These are just permutations, so can also be efficiently implemented via indexing, requiring `2n` indexing operations per layer.
-* Numerical precision is limited, especially with `float32`. Very large or very small values will cause trouble. Values distributed between 1 and 200 work reasonably. Values less than 1.0 are troublesome. 
+* Dynamic range is limited, especially with `float32`. Very large or very small values will cause trouble. Values distributed between 1 and ~300 work reasonably with `float64`. Values less than 1.0 are troublesome. 
 * The networks are *theoretically* differentiable, but gradients may be very small for larger networks.
 * I assume this idea is well known, but I couldn't find an obvious reference.
 
@@ -72,7 +72,7 @@ The base code works with NumPy. If you want to use [autograd](https://github.com
 
     pip install autoray
 
-The code should then automatically work with whatever backend you are using. I have only tested `autograd` as a NumPy drop in. 
+The code should then automatically work with whatever backend you are using. 
 
 `differentiable_sorting_torch.py` implements the necessary components in PyTorch. Tensorflow is also supported:
 
