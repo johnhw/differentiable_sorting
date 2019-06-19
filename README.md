@@ -1,5 +1,5 @@
 # Differentiable parallel approximate sorting networks
-A Python implementation of a fully-differentiable *approximate* sorting function for power-of-2 length vectors. Uses Numpy (or autograd, JAX or PyTorch), but trivial to use in other backends. Works on GPU. 
+A Python implementation of a fully-differentiable *approximate* sorting function for power-of-2 length vectors. Uses Numpy, PyTorch or Tensorflow (or autograd, JAX or cupy), but trivial to use in other backends. Works on GPU. 
 
 <img src="imgs/sorting_example.png">
 
@@ -66,50 +66,6 @@ Caveats:
 * The networks are *theoretically* differentiable, but gradients may be very small for larger networks.
 * I assume this idea is well known, but I couldn't find an obvious reference.
 
-## Libraries
-
-The base code works with NumPy. If you want to use [autograd](https://github.com/HIPS/autograd) [jax](https://github.com/google/jax) or [cupy](https://cupy.chainer.org/) then install the [autoray](https://pypi.org/project/autoray/) package.
-
-    pip install autoray
-
-The code should then automatically work with whatever backend you are using. 
-
-### PyTorch and Tensorflow
-PyTorch is supported:
-```python 
-import torch
-from differentiable_sorting.torch import bitonic_matrices, diff_sort
-from torch.autograd import Variable
-
-x = [5.0, -1.0, 9.5, 13.2, 16.2, 20.5, 42.0, 18.0]
-matrices = bitonic_matrices(8)
-torch_input = Variable(torch.from_numpy(np.array(x)).float(), requires_grad=True)
-result = diff_sort(matrices, torch_input)
-print(result)
-
->>> tensor([-1.0075,  4.9958,  9.4394, 13.2117, 15.9480, 18.2103, 20.6023, 42.0000],
-       grad_fn=<AddBackward0>)
-
-print(torch.autograd.grad(result[0], torch_input)[0])
-
->>> tensor([7.3447e-03, 9.9257e-01, 8.1266e-05, 3.9275e-06, 3.4427e-08, 1.4447e-09,
-        0.0000e+00, 9.5952e-09])
-```
-
-
-Tensorflow is also supported:
-
-```python 
-import tensorflow as tf
-from differentiable_sorting.tensorflow import bitonic_matrices, diff_sort, diff_argsort
-
-tf_input = tf.reshape(tf.convert_to_tensor([5.0, -1.0, 9.5, 13.2, 16.2, 20.5, 42.0, 18.0], dtype=tf.float64), (-1,1))
-tf_output = tf.reshape(diff_sort(tf_matrices, tf_input), (-1,))
-with tf.Session() as s:    
-    print(s.run((tf_output)))    
-
->>> [-1.007  4.996  9.439 13.212 15.948 18.21  20.602 42.   ]    
-```
 
 
 
@@ -188,6 +144,53 @@ where `weave = np.vstack([l, r])` and `unweave = np.hstack([l_inv, r_inv])`.
 
 ---
 
+## Libraries
+
+The base code works with NumPy. If you want to use [autograd](https://github.com/HIPS/autograd) [jax](https://github.com/google/jax) or [cupy](https://cupy.chainer.org/) then install the [autoray](https://pypi.org/project/autoray/) package.
+
+    pip install autoray
+
+The code should then automatically work with whatever backend you are using. 
+
+### PyTorch and Tensorflow
+PyTorch is supported:
+```python 
+import torch
+from differentiable_sorting.torch import bitonic_matrices, diff_sort
+from torch.autograd import Variable
+
+x = [5.0, -1.0, 9.5, 13.2, 16.2, 20.5, 42.0, 18.0]
+matrices = bitonic_matrices(8)
+torch_input = Variable(torch.from_numpy(np.array(x)).float(), requires_grad=True)
+result = diff_sort(matrices, torch_input)
+print(result)
+
+>>> tensor([-1.0075,  4.9958,  9.4394, 13.2117, 15.9480, 18.2103, 20.6023, 42.0000],
+       grad_fn=<AddBackward0>)
+
+print(torch.autograd.grad(result[0], torch_input)[0])
+
+>>> tensor([7.3447e-03, 9.9257e-01, 8.1266e-05, 3.9275e-06, 3.4427e-08, 1.4447e-09,
+        0.0000e+00, 9.5952e-09])
+```
+
+
+Tensorflow is also supported:
+
+```python 
+import tensorflow as tf
+from differentiable_sorting.tensorflow import bitonic_matrices, diff_sort, diff_argsort
+
+tf_input = tf.reshape(tf.convert_to_tensor([5.0, -1.0, 9.5, 13.2, 16.2, 20.5, 42.0, 18.0], dtype=tf.float64), (-1,1))
+tf_output = tf.reshape(diff_sort(tf_matrices, tf_input), (-1,))
+with tf.Session() as s:    
+    print(s.run((tf_output)))    
+
+>>> [-1.007  4.996  9.439 13.212 15.948 18.21  20.602 42.   ]    
+```
+
+
+---
 
 
 ## Error analysis
