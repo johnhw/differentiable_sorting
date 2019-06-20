@@ -134,24 +134,54 @@ def bitonic_woven_matrices(n):
     """
     fused = []
     i = 0
-    matrices = bitonic_matrices(n)    
+    matrices = bitonic_matrices(n)
     for i in range(len(matrices)):
         l, r, l_inv, r_inv = matrices[i]
         # initial permutation
-        if i==0:
+        if i == 0:
             weave = np.vstack([l, r])
             fused.append(weave)
         # last permutation
-        if i==len(matrices)-1:
+        if i == len(matrices) - 1:
             unweave = np.hstack([l_inv, r_inv])
             fused.append(unweave)
         else:
             # intermediate permutation; fuse unweave with next weave
             unweave = np.hstack([l_inv, r_inv])
-            nl, nr, _, _ = matrices[i+1]
+            nl, nr, _, _ = matrices[i + 1]
             next_weave = np.vstack([nl, nr])
-            fused.append(next_weave @ unweave)            
+            fused.append(next_weave @ unweave)
     return fused
+
+
+def bitonic_woven_matrices_alt(n):
+    """
+    Alternative direct implementation of bitonic_woven_matrices. 
+    """
+    layers = int(np.log2(n))
+    matrices = []
+    n2 = n // 2
+    last_unweave = np.eye(n)
+    for layer in range(layers):
+        for s in range(layer + 1):
+            m = 1 << (layer - s)
+            weave, unweave = np.zeros((n, n)), np.zeros((n, n))
+            out = 0
+            for i in range(0, n, m << 1):
+                for j in range(m):
+                    ix = i + j
+                    a, b = ix, ix + m
+                    weave[out, a] = 1
+                    weave[out + n // 2, b] = 1
+                    if (ix >> (layer + 1)) & 1:
+                        a, b = b, a
+                    unweave[a, out] = 1
+                    unweave[b, out + n // 2] = 1
+                    out += 1
+            matrices.append(weave @ last_unweave)
+            last_unweave = unweave
+    matrices.append(last_unweave)
+    return matrices
 
 
 def diff_sort_indexed(indices, x, softmax=softmax):
@@ -175,12 +205,12 @@ def diff_sort_weave(fused, x, softmax=softmax):
     a sequence x of length n.
     """
     split = len(x) // 2
-    x = fused[0] @ x 
-    for mat in fused[1:]:                
+    x = fused[0] @ x
+    for mat in fused[1:]:
         a, b = x[:split], x[split:]
         mx = softmax(a, b)
         mn = a + b - mx
-        x = mat @ np.concatenate([mn, mx])            
+        x = mat @ np.concatenate([mn, mx])
     return x
 
 
