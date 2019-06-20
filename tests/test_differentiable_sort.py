@@ -86,18 +86,14 @@ def test_matrices():
 
 def test_woven_matrices():
     for n in [2, 4, 8, 16, 32, 64, 128, 256, 512]:
-        matrices = bitonic_woven_matrices(n)
-        assert all([len(m) == 2 for m in matrices])
-        for l, r in matrices:
-            # check shapes OK
-            assert l.shape == (n, n)
-            assert r.shape == (n, n)
-            # check n elements OK
-            for m in [l, r]:
-                assert np.sum(m) == n
-                # test valid permutation matrix
-                assert np.allclose(np.sum(m, axis=0), np.ones(n))
-                assert np.allclose(np.sum(m, axis=1), np.ones(n))
+        matrices = bitonic_woven_matrices(n)        
+        for m in matrices:
+            # check shapes OK            
+            assert m.shape == (n, n)            
+            assert np.sum(m) == n
+            # test valid permutation matrix
+            assert np.allclose(np.sum(m, axis=0), np.ones(n))
+            assert np.allclose(np.sum(m, axis=1), np.ones(n))
 
 
 from scipy.stats import rankdata
@@ -129,6 +125,8 @@ def test_forms():
             test = np.random.randint(-200, 200, n)
             truth = np.sort(test)
             assert np.all(diff_sort(matrices, truth, np.maximum) == truth)
+            print(truth)
+            print(diff_sort_weave(woven, truth, np.maximum))
             assert np.all(diff_sort_weave(woven, truth, np.maximum) == truth)
             assert np.all(diff_sort_indexed(indices, truth, np.maximum) == truth)
 
