@@ -129,25 +129,28 @@ def diff_sort(matrices, x, softmax=softmax):
 
 def bitonic_woven_matrices(n):
     """Combine the l,r and l_inv, r_inv matrices into single n x n multiplies, for
-    use with bisort_weave/diff_bisort_weave, fusing together consecutive stages."""
+    use with bisort_weave/diff_bisort_weave, fusing together consecutive stages.
+    This reduces the number of multiplies to (k)(k+1) + 1 multiplies, where k=np.log2(n)    
+    """
     fused = []
     i = 0
     matrices = bitonic_matrices(n)    
     for i in range(len(matrices)):
         l, r, l_inv, r_inv = matrices[i]
+        # initial permutation
         if i==0:
             weave = np.vstack([l, r])
             fused.append(weave)
-            
+        # last permutation
         if i==len(matrices)-1:
             unweave = np.hstack([l_inv, r_inv])
             fused.append(unweave)
         else:
+            # intermediate permutation; fuse unweave with next weave
             unweave = np.hstack([l_inv, r_inv])
             nl, nr, _, _ = matrices[i+1]
             next_weave = np.vstack([nl, nr])
-            fused.append(next_weave @ unweave)
-            
+            fused.append(next_weave @ unweave)            
     return fused
 
 
