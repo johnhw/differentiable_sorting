@@ -75,9 +75,6 @@ Caveats:
 
 The sorting network for `n=2^k` elements has `k(k-1)/2` "layers" where parallel compare-and-swap operations are used to rearrange a `n` element vector into sorted order. The sequence of operations is independent of the data.
 
-These permutations can be written as a sequence of linear operations:
-
-
 
 ### Differentiable compare-and-swap
 
