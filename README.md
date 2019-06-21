@@ -105,11 +105,11 @@ smoothmax(a,b, alpha) = (a * exp(a * alpha)
 
 which has a configurable `alpha` term, allowing interpolation between a hard maximum (alpha -> infinity) and mean averaging (alpha -> 0).
 
-<img src="imgs/Logsumexp_curve.png" width="70%">
+<img src="imgs/Logsumexp_curve.png" width="40%">
 
 *Softmax/logsumexp/quasimax across the range [-5, 5] for various alpha.*
 
-<img src="imgs/Smoothmax_curve.png" width="70%">
+<img src="imgs/Smoothmax_curve.png" width="40%">
 
 *Smoothmax across the range [-5, 5] for various alpha.*
 
