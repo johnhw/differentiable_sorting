@@ -11,6 +11,10 @@ def softmax(a, b, alpha=1, normalize=0):
     """The softmaximum of softmax(a,b) = log(e^a + a^b).
     normalize should be zero if a or b could be negative and can be 1.0 (more accurate)
     if a and b are strictly positive.
+    Also called \alpha-quasimax: 
+            J. Cook.  Basic properties of the soft maximum.  
+            Working Paper Series 70, UT MD Anderson CancerCenter Department of Biostatistics, 
+            2011. http://biostats.bepress.com/mdandersonbiostat/paper7
     """
     return np.log(np.exp(a * alpha) + np.exp(b * alpha) - normalize) / alpha
 
@@ -20,6 +24,7 @@ def smoothmax(a, b, alpha=1):
     return (a * np.exp(a * alpha) + b * np.exp(b * alpha)) / (
         np.exp(a * alpha) + np.exp(b * alpha)
     )
+
 
 
 ### relaxed softmax
