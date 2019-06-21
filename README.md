@@ -95,12 +95,11 @@ Notice that we now have a differentiable compare-and-swap operation:
 
 `softcswap(a,b) = (softmin(a,b), softmax(a,b))`
 
-We can also use:
-```
-smoothmax(a,b, alpha) = (a * exp(a * alpha) 
-                        +  b * exp(b * alpha)) /
-                         (exp(a * alpha)+
-                           exp(b * alpha))
+We can alternatively use:
+
+```python
+smoothmax(a,b, alpha) = (a * exp(a * alpha) +  b * exp(b * alpha)) /
+                         (exp(a * alpha) + exp(b * alpha))
 ```
 
 which has a configurable `alpha` term, allowing interpolation between a hard maximum (alpha -> infinity) and mean averaging (alpha -> 0).
@@ -115,16 +114,6 @@ which has a configurable `alpha` term, allowing interpolation between a hard max
 
 ---
 
-This implementation was inspired by [this tweet](https://twitter.com/francoisfleuret/status/1139580698694733825) by @francoisfleuret:
-> François Fleuret @francoisfleuret Jun 14
->
->Discussion with Ronan Collober reminded me that (max, +) is a semi-ring, and made me realize that the same is true for (softmax, +) where
->
->softmax(a, b) = log(exp(a) + exp(b))
->
->All this coolness at the heart of his paper 
->
->https://arxiv.org/abs/1902.06022 
 
 ## Differentiable sorting
 
@@ -216,7 +205,18 @@ with tf.Session() as s:
 
 >>> [-1.007  4.996  9.439 13.212 15.948 18.21  20.602 42.   ]    
 ```
+---
 
+This implementation was inspired by [this tweet](https://twitter.com/francoisfleuret/status/1139580698694733825) by @francoisfleuret:
+> François Fleuret @francoisfleuret Jun 14
+>
+>Discussion with Ronan Collober reminded me that (max, +) is a semi-ring, and made me realize that the same is true for (softmax, +) where
+>
+>softmax(a, b) = log(exp(a) + exp(b))
+>
+>All this coolness at the heart of his paper 
+>
+>https://arxiv.org/abs/1902.06022 
 
 ---
 
