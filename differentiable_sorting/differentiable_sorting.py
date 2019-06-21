@@ -26,7 +26,6 @@ def smoothmax(a, b, alpha=1):
     )
 
 
-
 ### relaxed softmax
 def softmax_smooth(a, b, smooth=0):
     """The smoothed softmaximum of softmax(a,b) = log(e^a + a^b).
@@ -165,7 +164,6 @@ def bitonic_woven_matrices_alt(n):
     """
     layers = int(np.log2(n))
     matrices = []
-    n2 = n // 2
     last_unweave = np.eye(n)
     for layer in range(layers):
         for s in range(layer + 1):
@@ -178,13 +176,16 @@ def bitonic_woven_matrices_alt(n):
                     a, b = ix, ix + m
                     weave[out, a] = 1
                     weave[out + n // 2, b] = 1
+                    # flip comparison order as needed
                     if (ix >> (layer + 1)) & 1:
                         a, b = b, a
                     unweave[a, out] = 1
                     unweave[b, out + n // 2] = 1
                     out += 1
+            # fuse the unweave and weave steps
             matrices.append(weave @ last_unweave)
             last_unweave = unweave
+    # make sure the last unweave is preserved
     matrices.append(last_unweave)
     return matrices
 

@@ -75,14 +75,45 @@ Caveats:
 
 The sorting network for `n=2^k` elements has `k(k-1)/2` "layers" where parallel compare-and-swap operations are used to rearrange a `n` element vector into sorted order. The sequence of operations is independent of the data.
 
+These permutations can be written as a sequence of linear operations:
+
+
+
 ### Differentiable compare-and-swap
 
-If we define the `softmax(a,b)` function (not the traditional "softmax" used for classification, but rather log-sum-exp!) as the continuous approximation to the `max(a,b)` function, `softmax(a,b) = log(exp(a) + exp(b))`. Then `softmin(a,b)` as `softmin(a,b) = a + b - softmax(a,b)`.  [Alternatively `softmin(a,b) = -log(exp(-a) + exp(-b))` but this adds numerical instability]
+If we define the `softmax(a,b)` function (not the traditional "softmax" used for classification, but rather log-sum-exp!) as the continuous approximation to the `max(a,b)` function, 
 
-Notice that we now have a differentiable compare-and-swap operation: `softcswap(a,b) = (softmin(a,b), softmax(a,b))`
+`softmax(a,b) = log(exp(a) + exp(b))`. 
 
-We can also use the `smoothmax(a,b, alpha) = a * exp(a*alpha) +  b* exp(b*alpha) / (exp(a*alpha)+exp(b*alpha))`, which has a configurable `alpha` term, allowing interpolation between a hard maximum (alpha -> infinity) and mean averaging (alpha -> 0).
+then 
 
+`softmin(a,b) = a + b - softmax(a,b)`.  
+
+[Alternatively `softmin(a,b) = -log(exp(-a) + exp(-b))` but this adds numerical instability]
+
+Notice that we now have a differentiable compare-and-swap operation: 
+
+`softcswap(a,b) = (softmin(a,b), softmax(a,b))`
+
+We can also use:
+```
+smoothmax(a,b, alpha) = (a * exp(a * alpha) 
+                        +  b * exp(b * alpha)) /
+                         (exp(a * alpha)+
+                           exp(b * alpha))
+```
+
+which has a configurable `alpha` term, allowing interpolation between a hard maximum (alpha -> infinity) and mean averaging (alpha -> 0).
+
+<img src="imgs/Logsumexp_curve.png" width="70%">
+
+*Softmax/logsumexp/quasimax across the range [-5, 5] for various alpha.*
+
+<img src="imgs/Smoothmax_curve.png" width="70%">
+
+*Smoothmax across the range [-5, 5] for various alpha.*
+
+---
 
 This implementation was inspired by [this tweet](https://twitter.com/francoisfleuret/status/1139580698694733825) by @francoisfleuret:
 > François Fleuret @francoisfleuret Jun 14
