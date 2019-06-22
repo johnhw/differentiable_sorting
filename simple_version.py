@@ -4,7 +4,11 @@ import numpy as np
 
 
 def bitonic_matrices(n):
-    """Return the bitonic matrices to sort n elements, where n=2^k"""
+    """Return the bitonic matrices to sort n elements, where n=2^k.
+    This is a list of quadruples of matrices l,r,l_inv,r_inv
+    l, r are n/2 x n and map the input to the left and right sides of a compare-and-swap
+    l_inv, r_inv are n/2 x n and map the result of a compare-and-swap back to a vector of
+    length n"""
     # number of outer layers
     layers = int(np.log2(n))
     matrices = []
@@ -17,14 +21,11 @@ def bitonic_matrices(n):
             for i in range(0, n, m << 1):
                 for j in range(m):
                     ix = i + j
-                    a, b = ix, ix + m
-                    swap = (ix >> (layer + 1)) & 1
-                    l[out, a] = 1
-                    r[out, b] = 1
-                    if swap:
+                    a, b = ix, ix + m                    
+                    l[out, a], r[out,b] = 1, 1                    
+                    if (ix >> (layer + 1)) & 1:
                         a, b = b, a
-                    map_l[a, out] = 1
-                    map_r[b, out] = 1
+                    map_l[a, out], map_r[b, out] = 1, 1                    
                     out += 1
             matrices.append((l, r, map_l, map_r))
     return matrices
