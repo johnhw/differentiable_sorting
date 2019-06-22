@@ -61,7 +61,8 @@ A Python implementation of a fully-differentiable *approximate* sorting function
 
 Caveats:
 * May not be very efficient (!), requiring approximately `log_2(n)^2` matrix multiplies of size `n x n`. These are just permutations, so can also be efficiently implemented via indexing, requiring `2n` indexing operations per layer.
-* Dynamic range is limited, especially with `float32`. Very large or very small values will cause trouble. Values distributed between 1 and ~300 work reasonably with `float64`. Values less than 1.0 are troublesome. 
+* Dynamic range is limited, especially with `float32`. Very large or very small values will cause trouble. Values distributed between 1 and ~300 work reasonably with `float64` (and similarly for negative values). Values of magnitude 0.0-1.0 are troublesome. Inputs should be pre-normalised (e.g. batch-norm followed by a constant scale by 100)
+
 * The networks are *theoretically* differentiable, but gradients may be very small for larger networks.
 * I assume this idea is well known, but I couldn't find an obvious reference.
 
