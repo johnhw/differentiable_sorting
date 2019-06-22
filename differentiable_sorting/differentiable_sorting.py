@@ -1,3 +1,4 @@
+from .bitonic_loops import bitonic_layer_loop, bitonic_swap_loop
 try:
     # try to use autoray to provide transparent JAX/autograd support
     from autoray import numpy as np
@@ -63,26 +64,19 @@ def bitonic_matrices(n):
             
     """
     # number of outer layers
-    layers = int(np.log2(n))
+
     matrices = []
-    for layer in range(1, layers + 1):
-        # we have 1..layer sub layers
-        for sub in reversed(range(1, layer + 1)):
-            l, r = np.zeros((n // 2, n)), np.zeros((n // 2, n))
-            map_l, map_r = np.zeros((n, n // 2)), np.zeros((n, n // 2))
-            out = 0
-            for i in range(0, n, 2 ** sub):
-                for j in range(2 ** (sub - 1)):
-                    ix = i + j
-                    a, b = ix, ix + (2 ** (sub - 1))
-                    l[out, a] = 1
-                    r[out, b] = 1
-                    if (ix >> layer) & 1:
-                        a, b = b, a
-                    map_l[a, out] = 1
-                    map_r[b, out] = 1
-                    out += 1
-            matrices.append((l, r, map_l, map_r))
+    for n, m, layer in bitonic_layer_loop(n):
+        l, r = np.zeros((n // 2, n)), np.zeros((n // 2, n))
+        map_l, map_r = np.zeros((n, n // 2)), np.zeros((n, n // 2))
+        for a, b, out, swap in bitonic_swap_loop(n, m, layer):
+            l[out, a] = 1
+            r[out, b] = 1
+            if swap:
+                a,b = b,a
+            map_l[a, out] = 1
+            map_r[b, out] = 1
+        matrices.append((l, r, map_l, map_r))
     return matrices
 
 
@@ -96,25 +90,47 @@ def bitonic_indices(n):
     # number of outer layers
     layers = int(np.log2(n))
     indices = []
-    for layer in range(1, layers + 1):
-        # we have 1..layer sub layers
-        for sub in reversed(range(1, layer + 1)):
-            weave = np.zeros(n, dtype="i4")
-            unweave = np.zeros(n, dtype="i4")
-            out = 0
-            for i in range(0, n, 2 ** sub):
-                for j in range(2 ** (sub - 1)):
-                    ix = i + j
-                    a, b = ix, ix + (2 ** (sub - 1))
-                    weave[out] = a
-                    weave[out + n // 2] = b
-                    if (ix >> layer) & 1:
-                        a, b = b, a
-                    unweave[a] = out
-                    unweave[b] = out + n // 2
-                    out += 1
-            indices.append((weave, unweave))
+    for n, m, layer in bitonic_layer_loop(n):
+        weave = np.zeros(n, dtype="i4")
+        unweave = np.zeros(n, dtype="i4")        
+        for a, b, out, swap in bitonic_swap_loop(n, m, layer):
+            weave[out] = a
+            weave[out + n // 2] = b
+            if swap:
+                a, b = b, a
+            unweave[a] = out
+            unweave[b] = out + n // 2                    
+        indices.append((weave, unweave))
     return indices
+
+
+
+def bitonic_woven_matrices(n):
+    """
+    Combine the l,r and l_inv, r_inv matrices into single n x n multiplies, for
+    use with bisort_weave/diff_bisort_weave, fusing together consecutive stages.
+    This reduces the number of multiplies to (k)(k+1) + 1 multiplies, where k=np.log2(n)    
+    """
+    layers = int(np.log2(n))
+    matrices = []
+    last_unweave = np.eye(n)
+    for n, m, layer in bitonic_layer_loop(n):    
+        weave, unweave = np.zeros((n, n)), np.zeros((n, n))
+        for a, b, out, swap in bitonic_swap_loop(n, m, layer):                        
+                    weave[out, a] = 1
+                    weave[out + n // 2, b] = 1
+                    # flip comparison order as needed
+                    if swap:
+                        a, b = b, a
+                    unweave[a, out] = 1
+                    unweave[b, out + n // 2] = 1                    
+        # fuse the unweave and weave steps
+        matrices.append(weave @ last_unweave)
+        last_unweave = unweave
+    # make sure the last unweave is preserved
+    matrices.append(last_unweave)
+    return matrices
+
 
 
 def diff_sort(matrices, x, softmax=softmax):
@@ -130,64 +146,8 @@ def diff_sort(matrices, x, softmax=softmax):
 
     return x
 
+    
 
-def bitonic_woven_matrices(n):
-    """Combine the l,r and l_inv, r_inv matrices into single n x n multiplies, for
-    use with bisort_weave/diff_bisort_weave, fusing together consecutive stages.
-    This reduces the number of multiplies to (k)(k+1) + 1 multiplies, where k=np.log2(n)    
-    """
-    fused = []
-    i = 0
-    matrices = bitonic_matrices(n)
-    for i in range(len(matrices)):
-        l, r, l_inv, r_inv = matrices[i]
-        # initial permutation
-        if i == 0:
-            weave = np.vstack([l, r])
-            fused.append(weave)
-        # last permutation
-        if i == len(matrices) - 1:
-            unweave = np.hstack([l_inv, r_inv])
-            fused.append(unweave)
-        else:
-            # intermediate permutation; fuse unweave with next weave
-            unweave = np.hstack([l_inv, r_inv])
-            nl, nr, _, _ = matrices[i + 1]
-            next_weave = np.vstack([nl, nr])
-            fused.append(next_weave @ unweave)
-    return fused
-
-
-def bitonic_woven_matrices_alt(n):
-    """
-    Alternative direct implementation of bitonic_woven_matrices. 
-    """
-    layers = int(np.log2(n))
-    matrices = []
-    last_unweave = np.eye(n)
-    for layer in range(layers):
-        for s in range(layer + 1):
-            m = 1 << (layer - s)
-            weave, unweave = np.zeros((n, n)), np.zeros((n, n))
-            out = 0
-            for i in range(0, n, m << 1):
-                for j in range(m):
-                    ix = i + j
-                    a, b = ix, ix + m
-                    weave[out, a] = 1
-                    weave[out + n // 2, b] = 1
-                    # flip comparison order as needed
-                    if (ix >> (layer + 1)) & 1:
-                        a, b = b, a
-                    unweave[a, out] = 1
-                    unweave[b, out + n // 2] = 1
-                    out += 1
-            # fuse the unweave and weave steps
-            matrices.append(weave @ last_unweave)
-            last_unweave = unweave
-    # make sure the last unweave is preserved
-    matrices.append(last_unweave)
-    return matrices
 
 
 def diff_sort_indexed(indices, x, softmax=softmax):
@@ -230,6 +190,10 @@ def order_matrix(original, sortd, sigma=0.1):
 
 
 def dargsort(original, sortd, sigma, transpose=False):
+    """Take an input vector `original` and a sorted vector `sortd`
+    along with an RBF kernel width `sigma`, return an approximate ranking.
+    If transpose is True, returns approximate argsort (but note that ties have identical values)
+    If transpose is False (default), returns ranking"""
     order = order_matrix(original, sortd, sigma=sigma)
     if transpose:
         order = order.T
@@ -237,9 +201,14 @@ def dargsort(original, sortd, sigma, transpose=False):
 
 
 def diff_argsort(matrices, x, sigma=0.1, softmax=softmax, transpose=False):
+
     """Return the smoothed, differentiable ranking of each element of x. Sigma
-    specifies the smoothing of the ranking. 
-    If transpose is true, returns argsort; if false, returns ranking.
+    specifies the smoothing of the ranking. Note that this function is deceptively named,
+    and in the default setting returns the *ranking*, not the argsort.
+    
+    If transpose is True, returns argsort (but note that ties are not broken in differentiable
+    argsort);
+    If False, returns ranking (likewise, ties are not broken).
     """
     sortd = diff_sort(matrices, x, softmax)
     return dargsort(x, sortd, sigma, transpose)
@@ -249,7 +218,10 @@ def diff_argsort_indexed(indices, x, sigma=0.1, softmax=softmax, transpose=False
     """Return the smoothed, differentiable ranking of each element of x. Sigma
     specifies the smoothing of the ranking. Uses the indexed form
     to avoid multiplies.
-    If transpose is true, returns argsort; if false, returns ranking.
+    
+    If transpose is True, returns argsort (but note that ties are not broken in differentiable
+    argsort);
+    If False, returns ranking (likewise, ties are not broken).
     """
     sortd = diff_sort_indexed(indices, x, softmax)
     return dargsort(x, sortd, sigma, transpose)

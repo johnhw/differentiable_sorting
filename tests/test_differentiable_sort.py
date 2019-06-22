@@ -99,6 +99,7 @@ def test_woven_matrices():
 from scipy.stats import rankdata
 
 
+# test that ranking works
 def test_ranking():
     for n in [2, 4, 8, 16, 32, 64, 128, 256, 512]:
         woven = bitonic_woven_matrices(n)
@@ -125,8 +126,6 @@ def test_forms():
             test = np.random.randint(-200, 200, n)
             truth = np.sort(test)
             assert np.all(diff_sort(matrices, truth, np.maximum) == truth)
-            print(truth)
-            print(diff_sort_weave(woven, truth, np.maximum))
             assert np.all(diff_sort_weave(woven, truth, np.maximum) == truth)
             assert np.all(diff_sort_indexed(indices, truth, np.maximum) == truth)
 
