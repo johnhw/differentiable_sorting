@@ -79,7 +79,7 @@ The sorting network for `n=2^k` elements has `k(k-1)/2` "layers" where parallel 
 
 ### Differentiable compare-and-swap
 
-If we define the `softmax(a,b)` function (not the traditional "softmax" used for classification, but rather log-sum-exp!) as the continuous approximation to the `max(a,b)` function, 
+If we define the `softmax(a,b)` function (not the traditional "softmax" used for classification, but rather log-sum-exp!) as the [continuous approximation to the `max(a,b)` function](https://en.wikipedia.org/wiki/Smooth_maximum), 
 
 `softmax(a,b) = log(exp(a) + exp(b))`. 
 
@@ -214,7 +214,7 @@ This implementation was inspired by [this tweet](https://twitter.com/francoisfle
 >
 >All this coolness at the heart of his paper 
 >
->https://arxiv.org/abs/1902.06022 
+>https://arxiv [dot] org/abs/1902.06022 
 
 ---
 
