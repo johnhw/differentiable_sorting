@@ -51,14 +51,14 @@ def pretty_bitonic_network(n):
             for k in range(n):
                 if a == k:                            
                     if swap:
-                        print(f" ╰─", end="")
+                        print(" ╰─", end="")
                     else:
-                        print(f" ╭─", end="")
+                        print(" ╭─", end="")
                 elif b==k:
                     if swap:
-                        print(f"─╮ ", end="")
+                        print("─╮ ", end="")
                     else:
-                        print(f"─╯ ", end="")
+                        print("─╯ ", end="")
                 elif a < k < b:
                     print("───", end="")
                 else:

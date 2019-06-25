@@ -230,6 +230,9 @@ The plot below shows the relative RMS (RMS error divided by the maximum range of
 
 **Smoothmax** error curve.
 
+
+
+
 ---
 
 There is also a function to pretty-print bitonic networks:
