@@ -87,8 +87,8 @@ def vector_sort(matrices, X, key, alpha=1):
         # apply weighting to the full vectors
         aX = l @ X
         bX = r @ X
-        w_max = (a_weight * aX.T + b_weight * bX.T).T
-        w_min = (b_weight * aX.T + a_weight * bX.T).T
+        w_max = (a_weight * aX.t() + b_weight * bX.t()).t()
+        w_min = (b_weight * aX.t() + a_weight * bX.t()).t()
         # recombine into the full vector
         X = (map_l @ w_max) + (map_r @ w_min)
     return X

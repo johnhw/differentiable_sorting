@@ -12,7 +12,7 @@ except:
 
 from differentiable_sorting.torch import bitonic_matrices, diff_sort
 from differentiable_sorting.torch import softmax, smoothmax, softmax_smooth
-from differentiable_sorting.torch import diff_argsort
+from differentiable_sorting.torch import diff_argsort, vector_sort
 from torch.autograd import Variable
 import numpy as np
 
@@ -40,6 +40,12 @@ def test_sorting():
             diff_argsort(torch_matrices, test, transpose=True, softmax=max_fn)
             argsorted_result = diff_argsort(torch_matrices, test, softmax=max_fn)
             jacobian(argsorted_result, test)
+
+            test_X = Variable(
+                torch.from_numpy(np.random.randint(-200, 200, (8, 5))).float(),
+                requires_grad=True,
+            )
+            vector_sort(torch_matrices, test_X, lambda x: torch.sum(x, dim=1))
 
 
 test_sorting()

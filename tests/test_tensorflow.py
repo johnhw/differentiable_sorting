@@ -12,7 +12,7 @@ except:
 
 
 from tensorflow.python.ops.parallel_for.gradients import jacobian
-from differentiable_sorting import bitonic_matrices, diff_sort
+from differentiable_sorting import bitonic_matrices, diff_sort, vector_sort
 from differentiable_sorting import softmax, smoothmax, softmax_smooth
 from differentiable_sorting.tensorflow import diff_argsort
 import numpy as np
@@ -32,6 +32,15 @@ def test_sorting():
         tf_ranks = diff_argsort(tf_matrices, test)
         tf_argsort = diff_argsort(tf_matrices, test, transpose=True)
         tf_grads = tf.squeeze(jacobian(tf_output, test))
+
+        test_mat = tf.convert_to_tensor(
+            np.random.randint(-200, 200, (8, 5)), dtype=dtype
+        )
+
+        # tf_vsort = vector_sort(
+        #    tf_matrices, test_mat, lambda x: tf.reduce_sum(x, axis=1)
+        # )
+
         # compute output and gradient
         with tf.Session() as s:
             s.run((tf_output, tf_grads, tf_ranks, tf_argsort))
