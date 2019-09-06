@@ -20,9 +20,9 @@ def test_vector_sort():
     for n in [2, 4, 8, 16, 32]:
         matrices = bitonic_matrices(n)
         for d in [1, 2, 4, 8]:
-            X = np.random.uniform(-100, 100, (d, n))
+            X = np.random.uniform(-100, 100, (n, d))
             weight = np.random.uniform(0, 1, d)
-            jac = jac_vector_sort(matrices, X, lambda x: (x.T @ weight).T)
+            jac = jac_vector_sort(matrices, X, lambda x: x @ weight)
 
 
 def test_jacobian_sort():

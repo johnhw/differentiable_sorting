@@ -17,29 +17,27 @@ maxes = [np.maximum, softmax, smoothmax, softmax_smooth]
 
 
 def test_vector_sort():
-    test_array = np.array([[-10, 2, 30, 4, 5, 6, 7, 80], [5, 6, 7, 8, 9, 10, 11, 1]])
+    test_array = np.array([[-10, 2, 30, 4, 5, 6, 7, 80], [5, 6, 7, 8, 9, 10, 11, 1]]).T
     sorted_X = vector_sort(
-        bitonic_matrices(8), test_array, lambda x: (x.T @ [1, 0]).T, alpha=1.0
+        bitonic_matrices(8), test_array, lambda x: x @ [1, 0], alpha=1.0
     )
     assert abs(test_array[0, 0] - -10.0) < 1.0
-    assert abs(test_array[0, -1] - 80.0) < 1.0
-    assert abs(test_array[1, 0] - 5.0) < 1.0
-    assert abs(test_array[1, -1] - 1.0) < 1.0
+    assert abs(test_array[-1, 0] - 80.0) < 1.0
+    assert abs(test_array[0, 1] - 5.0) < 1.0
+    assert abs(test_array[-1, 1] - 1.0) < 1.0
 
     # check that second column not affected by small changes in first
     # which preserve order
-    test_array_2 = np.array([[1, 2, 70, 4, 5, 6, 7, 120], [5, 6, 7, 8, 9, 10, 11, 1]])
-    assert np.allclose(test_array[1], test_array_2[1])
+    test_array_2 = np.array([[1, 2, 70, 4, 5, 6, 7, 120], [5, 6, 7, 8, 9, 10, 11, 1]]).T
+    assert np.allclose(test_array[:, 1], test_array_2[:, 1])
 
     for n in [2, 4, 8, 16, 64, 256]:
         matrices = bitonic_matrices(n)
         for d in [1, 2, 3, 8, 10]:
             for alpha in [0.01, 0.1, 1.0, 10.0]:
-                X = np.random.uniform(-100, 100, (d, n))
+                X = np.random.uniform(-100, 100, (n, d))
                 weight = np.random.uniform(0, 1, d)
-                sorted_X = vector_sort(
-                    matrices, X, lambda x: (x.T @ weight).T, alpha=alpha
-                )
+                sorted_X = vector_sort(matrices, X, lambda x: x @ weight, alpha=alpha)
                 assert sorted_X.shape == X.shape
 
 

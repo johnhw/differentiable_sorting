@@ -156,6 +156,21 @@ If we're willing to include a split and join operation, we can reduce this to a 
         return x
 ```
 
+We can also sort vector valued functions using a particular "key" function, assuming this function is also differentiable (e.g. sort by a particular column) using `vector_sort`:
+
+```python
+    vector_sort(
+        bitonic_matrices(4),
+        np.array([[1, 30, 6, 80], 
+                  [5, 30, 9, -2]]),
+        lambda x: (x.T @ [1, 0]).T,
+        alpha=2.0,
+    )
+
+    >>> 
+    array([[80.        , 30.        ,  5.99977301,  1.00022699],
+           [-2.        , 30.        ,  8.99981841,  5.00018159]])
+```
 
 ---
 

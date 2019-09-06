@@ -167,7 +167,7 @@ def vector_sort(matrices, X, key, alpha=1):
     while sorting. Uses softmax to weight components of the matrix.
     
     For example, selecting the nth element of each vector by 
-    multipliying with a one-hot vector.
+    multiplying with a one-hot vector.
     
     Parameters:
     ------------
@@ -183,18 +183,19 @@ def vector_sort(matrices, X, key, alpha=1):
         
     """
     for l, r, map_l, map_r in matrices:
+
         x = key(X)
         # compute weighting on the scalar function
         a, b = l @ x, r @ x
         a_weight = np.exp(a * alpha) / (np.exp(a * alpha) + np.exp(b * alpha))
         b_weight = 1 - a_weight
         # apply weighting to the full vectors
-        aX = l @ X.T
-        bX = r @ X.T
+        aX = l @ X
+        bX = r @ X
         w_max = (a_weight * aX.T + b_weight * bX.T).T
         w_min = (b_weight * aX.T + a_weight * bX.T).T
         # recombine into the full vector
-        X = ((map_l @ w_max) + (map_r @ w_min)).T
+        X = (map_l @ w_max) + (map_r @ w_min)
     return X
 
 
