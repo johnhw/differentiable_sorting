@@ -55,3 +55,39 @@ def bitonic_matrices(n):
         for matrix_set in matrices
     ]
 
+
+def vector_sort(matrices, X, key, alpha=1):
+    """
+    Sort a matrix X, applying a differentiable function "key" to each vector
+    while sorting. Uses softmax to weight components of the matrix.
+    
+    For example, selecting the nth element of each vector by 
+    multiplying with a one-hot vector.
+    
+    Parameters:
+    ------------
+        matrices:   the nxn bitonic sort matrices created by bitonic_matrices
+        X:          an [n,d] matrix of elements
+        key:        a function taking a d-element vector and returning a scalar
+        alpha=1.0:  smoothing to apply; smaller alpha=smoother, less accurate sorting,
+                    larger=harder max, increased numerical instability
+        
+    Returns:
+    ----------
+        X_sorted: [n,d] matrix (approximately) sorted accoring to 
+        
+    """
+    for l, r, map_l, map_r in matrices:
+        x = key(X)
+        # compute weighting on the scalar function
+        a, b = l @ x, r @ x
+        a_weight = torch.exp(a * alpha) / (torch.exp(a * alpha) + torch.exp(b * alpha))
+        b_weight = 1 - a_weight
+        # apply weighting to the full vectors
+        aX = l @ X.T
+        bX = r @ X.T
+        w_max = (a_weight * aX.T + b_weight * bX.T).T
+        w_min = (b_weight * aX.T + a_weight * bX.T).T
+        # recombine into the full vector
+        X = ((map_l @ w_max) + (map_r @ w_min)).T
+    return X

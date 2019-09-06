@@ -184,7 +184,6 @@ def vector_sort(matrices, X, key, alpha=1):
     """
     for l, r, map_l, map_r in matrices:
         x = key(X)
-        print(x.shape, X.shape)
         # compute weighting on the scalar function
         a, b = l @ x, r @ x
         a_weight = np.exp(a * alpha) / (np.exp(a * alpha) + np.exp(b * alpha))

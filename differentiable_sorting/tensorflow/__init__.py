@@ -6,6 +6,7 @@ from ..differentiable_sorting import (
     softmax,
     smoothmax,
     softmax_smooth,
+    vector_sort,
 )
 
 ### differentiable ranking
