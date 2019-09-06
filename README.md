@@ -66,6 +66,41 @@ Caveats:
 * The networks are *theoretically* differentiable, but gradients may be very small for larger networks.
 * I assume this idea is well known, but I couldn't find an obvious reference.
 
+## Vector sorting
+We can also sort vector valued entries using a particular "key" function, assuming this function is also differentiable (e.g. sort a matrix by a particular column) using `vector_sort`:
+
+```python
+    vector_sort(
+        bitonic_matrices(4),
+        np.array([[1, 5], 
+                  [30, 30], 
+                  [6, 9], 
+                  [80, -2]]),
+        lambda x: (x @ [1,0]), # sort by column 1    
+        alpha=1.0
+    )
+
+    >>> array( [[80.  , -2.  ],
+                [30.  , 30.  ],
+                [ 5.97,  8.97],
+                [ 1.03,  5.03]])
+
+    vector_sort(
+        bitonic_matrices(4),
+        np.array([[1, 5], 
+                  [30, 30], 
+                  [6, 9], 
+                  [80, -2]]),
+        lambda x: (x @ [0,1]), # sort by column 2    
+    )
+
+    >>>  array([[30.  , 30.  ],
+                [ 5.91,  8.93],
+                [ 1.16,  5.07],
+                [79.93, -1.99]])
+```
+
+
 ## Bitonic sorting
 
 [Bitonic sorts](https://en.wikipedia.org/wiki/Bitonic_sorter) create sorting networks with a sequence of fixed conditional swapping operations executed on an `n` element vector in parallel where, `n=2^k`. 
@@ -156,24 +191,7 @@ If we're willing to include a split and join operation, we can reduce this to a 
         return x
 ```
 
-## Vector sorting
-We can also sort vector valued entries using a particular "key" function, assuming this function is also differentiable (e.g. sort a matrix by a particular column) using `vector_sort`:
 
-```python
-    vector_sort(
-    bitonic_matrices(4),
-    np.array([[1, 5], 
-              [30, 30], 
-              [6, 9], 
-              [80, -2]]),
-    lambda x: (x @ [1,0]), # sort by column 1    
-    alpha=1.0
-)
-    >>> array([[80.        , -2.        ],
-               [30.        , 30.        ],
-               [ 5.96653575,  8.9732286 ],
-               [ 1.03346425,  5.0267714 ]])
-```
 
 ---
 
