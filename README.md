@@ -64,7 +64,7 @@ Caveats:
 * Dynamic range is limited, especially with `float32`. Very large or very small values will cause trouble. Values distributed between 1 and ~300 work reasonably with `float64` (and similarly for negative values). Values of magnitude 0.0-1.0 are troublesome. Inputs should be pre-normalised (e.g. batch-norm followed by a constant scale by 100)
 
 * The networks are *theoretically* differentiable, but gradients may be very small for larger networks.
-* This appears to be the idea presented in **NeuroSort** by Grover et al. **Grover, A., Wang, E., Zweig, A., & Ermon, S. (2019). Stochastic optimization of sorting networks via continuous relaxations. arXiv preprint arXiv:1903.08850.**
+* This appears to be a variation of the idea presented in **NeuroSort** by Grover et al. **Grover, A., Wang, E., Zweig, A., & Ermon, S. (2019). Stochastic optimization of sorting networks via continuous relaxations. arXiv preprint arXiv:190 3.08850.**
 
 ## Vector sorting
 We can also sort vector valued entries using a particular "key" function, assuming this function is also differentiable (e.g. sort a matrix by a particular column) using `vector_sort`:
