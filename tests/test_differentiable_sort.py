@@ -8,7 +8,7 @@ from differentiable_sorting import (
 from differentiable_sorting import diff_sort_indexed, diff_sort_weave
 from differentiable_sorting import softmax, smoothmax, softmax_smooth
 from differentiable_sorting import diff_sort, diff_argsort, diff_argsort_indexed
-from differentiable_sorting import vector_sort
+from differentiable_sorting import vector_sort, comparison_sort
 
 # non-power-of-2
 # tests for smoothing, woven structure, argsort, etc.
@@ -39,6 +39,51 @@ def test_vector_sort():
                 weight = np.random.uniform(0, 1, d)
                 sorted_X = vector_sort(matrices, X, lambda x: x @ weight, alpha=alpha)
                 assert sorted_X.shape == X.shape
+
+
+
+def test_comparison_sort():
+    np.random.seed(24)
+    
+    def abs_fn(a,b):
+        return np.tanh(a**2 - b**2)
+
+    def normal_fn(a,b):
+        return np.tanh(a-b)
+
+    # simple fixed test
+    matrices = bitonic_matrices(8)
+       
+    test_array = np.array([-10, 2, 30, 4, 5, 6, 7, 80])
+    sorted_X = comparison_sort(bitonic_matrices(8), test_array, abs_fn)
+    assert np.allclose(sorted_X, [ 80.,  30., -10.,   7.,   6.,   5.,   4.,   2.])
+   
+    # check that absolute ordering works for various sizes
+    for n  in [4,8,16,32,64]:
+        matrices = bitonic_matrices(n)
+        x = np.random.normal(0,200,n)
+        abs_sorted_xs = comparison_sort(matrices, x, abs_fn)
+        normal_sorted_xs = comparison_sort(matrices, x, normal_fn)
+
+        assert np.all(np.diff(np.abs(abs_sorted_xs))<0)
+        assert np.all(np.diff(normal_sorted_xs)<0)
+        assert abs_sorted_xs.shape == x.shape 
+        assert normal_sorted_xs.shape == x.shape 
+        assert not np.allclose(abs_sorted_xs, normal_sorted_xs)
+    
+    def compare_fn(l, r):                
+        l = np.mean(l.reshape(l.shape[0], -1), axis=1) 
+        r = np.mean(r.reshape(r.shape[0], -1), axis=1) 
+        return np.tanh(l-r)
+
+    # check tensor operations work correctly
+    x = np.random.normal(0,1,(16, 13, 19))
+    x = (x.T + np.random.uniform(-2, 2, 16)).T
+    matrices = bitonic_matrices(16)
+    sorted_xs = comparison_sort(matrices, x, compare_fn, alpha=1, scale=200)
+    assert sorted_xs.shape == x.shape
+
+   
 
 
 def test_network():

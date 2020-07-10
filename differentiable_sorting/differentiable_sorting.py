@@ -161,6 +161,44 @@ def diff_sort_indexed(indices, x, softmax=softmax):
     return x
 
 
+def comparison_sort(matrices, x, compare_fn, alpha=1, scale=250):
+    """
+    Sort a tensor X, applying a differentiable comparison function "compare_fn" 
+    while sorting. Uses softmax to weight components of the matrix.
+           
+    Parameters:
+    ------------
+        matrices:   the nxn bitonic sort matrices created by bitonic_matrices
+        X:          an [n,...] tensor of elements
+        compare_fn: a differentiable comparison function compare_fn(a,b)
+                    taking a pair of [n//2,...] tensors and returning a signed [n//2] vector.
+        alpha=1.0:  smoothing to apply; smaller alpha=smoother, less accurate sorting,
+                    larger=harder max, increased numerical instability
+        scale=250:  scaling applied to output of compare_fn. Default is useful for 
+                    comparison functions returning values in the range ~[-1, 1]
+        
+    Returns:
+    ----------
+        X_sorted: [n,...] tensor (approximately) sorted accoring to compare_fn
+        
+    """    
+    for l, r, map_l, map_r in matrices:        
+        score = compare_fn((x.T @ l.T).T, (x.T @ r.T).T)         
+        a, b = score*scale, score*-scale
+        a_weight = np.exp(a * alpha) / (np.exp(a * alpha) + np.exp(b * alpha))
+        b_weight = 1 - a_weight        
+        # apply weighting to the full vectors
+        aX =  x.T @ l.T
+        bX = x.T @ r.T        
+        w_max = (a_weight * aX + b_weight * bX)
+        w_min = (b_weight * aX + a_weight * bX)        
+        # recombine into the full vector
+        x = ( w_max @ map_l.T) + (w_min @ map_r.T)      
+        x = x.T
+        
+    return x
+
+
 def vector_sort(matrices, X, key, alpha=1):
     """
     Sort a matrix X, applying a differentiable function "key" to each vector
