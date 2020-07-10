@@ -121,6 +121,8 @@ print(sorted_x)
 >>> [184.94 -79.1  -77.71 -76.32 -41.48 -33.34 -21.86   8.11]
 ```
 
+This makes it possible to sort data like images or signals, as well as plain old numbers.
+
 ## Bitonic sorting
 
 [Bitonic sorts](https://en.wikipedia.org/wiki/Bitonic_sorter) create sorting networks with a sequence of fixed conditional swapping operations executed on an `n` element vector in parallel where, `n=2^k`. 
