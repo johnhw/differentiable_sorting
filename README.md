@@ -100,6 +100,26 @@ We can also sort vector valued entries using a particular "key" function, assumi
                 [79.93, -1.99]])
 ```
 
+### Custom comparator functions
+
+It is also possible to sort using any differentiable comparator function:
+
+```python
+np.random.seed(31)
+x = np.random.normal(0,100,8)
+print(x)
+>>>  [-41.48 -33.34   8.11 -79.1  -21.86 -76.32 -77.71 184.94]
+
+
+def compare_fn(a,b):
+    # "clamped abs"
+    return np.tanh(a**2 - b**2)
+
+matrices = bitonic_matrices(8)
+sorted_x = comparison_sort(matrices, x, compare_fn)
+print(sorted_x)
+>>> [184.94 -79.1  -77.71 -76.32 -41.48 -33.34 -21.86   8.11]
+```
 
 ## Bitonic sorting
 
